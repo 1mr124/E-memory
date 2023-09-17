@@ -8,9 +8,9 @@ from datetime import datetime # to store the acurate date in the database
 from FlaskSite import app ,db
 from FlaskSite.forms import InfoF,NewTopic
 from FlaskSite.models import *
+from os import getcwd
 
-
-IMG_FOLDER = 'FlaskSite/static/Files/imgs/'
+IMG_FOLDER =  '/static/Files/imgs/'
 ALLOWED_EXTENSIONS = { 'png', 'jpg', 'jpeg',"txt",'py'}
 
 app.config['IMG_FOLDER'] = IMG_FOLDER
@@ -66,9 +66,7 @@ def StorePic(info,ListOfFiles):
                 
                 filename = secure_filename(i.filename)
                 filename = info.Key +"-"+ str(datetime.now()) + filename[filename.rfind("."):]
-                filename = IMG_FOLDER+filename
-                i.save(filename)
-                filename=filename.replace("FlaskSite",'')
+                i.save( app.root_path + IMG_FOLDER + filename)
                 
                 t = Pic(PicPath=filename , Info=info)
                 t.PicHead = newHead if newHead else None
@@ -76,6 +74,8 @@ def StorePic(info,ListOfFiles):
                 db.session.add(t)
         return True
     except Exception as e:
+        print("hello")
+        print(e)
         return False
 
 def StoreFile():
@@ -145,7 +145,7 @@ def Topic():
                 return redirect(url_for("Topic"))
         elif request.form.get("SearchTopic",""):
             TID = request.form.get("SearchTopic","")
-            if TID:
+            if TopicsValue.get(TID,''):
                 TID = TopicsValue[TID]
                 SearchKeys = [ i.Key for i in  SearchKey.query.all() ]
                 AllInfo = Info.query.filter_by(TopicId=TID).all()

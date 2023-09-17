@@ -89,7 +89,7 @@
                          </p>
                          {% for path in info.Pics %}
                          <div class="mySlides">
-                            <img src="{{ path.PicPath }}" style="width:100%">
+                            <img src="/static/Files/imgs/{{ path.PicPath }}" style="width:100%">
                          </div>
                          
                                 
@@ -105,7 +105,7 @@
                         <div class="row">
                             {% for path in info.Pics %}
                             <div class="column">
-                                <img class="demo cursor" src="{{ path.PicPath }}" style="width:100%" onclick="currentSlide({{ loop.index }})" alt="{{path.PicComment}}">
+                                <img class="demo cursor" src="/static/Files/imgs/{{ path.PicPath }}" style="width:100%" onclick="currentSlide({{ loop.index }})" alt="{{path.PicComment}}">
                               </div>
                             {% endfor %}
                             
