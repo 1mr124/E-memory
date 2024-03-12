@@ -9,9 +9,9 @@ else:
 
 if __name__ == '__main__':
 	if root:
-		app.run(host="0.0.0.0",port=5000) # this tell the framework to run it on privte ip
+		app.run(host="0.0.0.0",port=5000,debug=False) # this tell the framework to run it on privte ip
 	else:
-		app.run(debug=True) # run it on localhost with debug mode on
+		app.run(debug=False) # run it on localhost with debug mode on
 
 
 

@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "HARD TO KNOW"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///+PathToE-memory/instance/site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/mr124/Documents/E-memory-main/instance/site.db'
 
 db = SQLAlchemy(app)
 
