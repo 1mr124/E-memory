@@ -66,6 +66,7 @@ def StorePic(info,ListOfFiles):
                 
                 filename = secure_filename(i.filename)
                 filename = info.Key +"-"+ str(datetime.now()) + filename[filename.rfind("."):]
+                filename = filename.replace(" ","")
                 i.save( app.root_path + IMG_FOLDER + filename)
                 
                 t = Pic(PicPath=filename , Info=info)
