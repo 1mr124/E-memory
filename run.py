@@ -1,7 +1,9 @@
+#!/home/mr124/PyEnv/E-Memory/bin/python3
+
 from FlaskSite import app
 from sys import argv # to take input arguments from script 
 
-# run it as admin if you gave it any tow input argu
+# run it Global in Lan if you gave it any two input arguments
 if len(argv) ==2:
 	root = True
 else:
@@ -9,18 +11,7 @@ else:
 
 if __name__ == '__main__':
 	if root:
-		app.run(host="0.0.0.0",port=5000,debug=False) # this tell the framework to run it on privte ip
+		app.run(host="0.0.0.0",port=5000,debug=False) # this Option to run it in your Local Lan
 	else:
-		app.run(debug=False) # run it on localhost with debug mode on
-
-
-
-"""
-This is the server alias 
-put it in .bachrc to make alias
-alias em='cd /home/muhammed/E-memeory/E-memory-main/ && nohup python3 run.py &'
-alias EM="cd /home/muhammed/E-memeory/E-memory-main/ && nohup python3 run.py 1 & "
-
-
-"""
+		app.run(debug=False) # run it on localhost with debug mode off
 
