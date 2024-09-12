@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from FlaskSite import db
 from flask_login import UserMixin
 
@@ -6,7 +6,7 @@ from flask_login import UserMixin
 class Info(db.Model):
     __tablename__ = "info"
     InfoId  = db.Column(db.Integer , primary_key=True)
-    Time    = db.Column(db.DateTime , default = datetime.now())
+    Time    = db.Column(db.DateTime , default = datetime.datetime.now(datetime.timezone.utc))
     TopicId = db.Column(db.Integer , db.ForeignKey("topic.TopicId")  )
     Key = db.Column(db.String(50), nullable = False ,index=True , default = "other")
     Text    = db.relationship( "Text", backref="Info", lazy="joined" )
