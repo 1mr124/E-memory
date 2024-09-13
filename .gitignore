@@ -130,3 +130,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.DS_Store
+site.db
+FlaskSite/__init__.py
