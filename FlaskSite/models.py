@@ -58,9 +58,24 @@ class Link(db.Model):
   
 class Topics(db.Model):
     __tablename__ = "topic"
-    TopicId  = db.Column(db.Integer , primary_key=True)
-    TopicName   = db.Column(db.String(40), index = True , nullable = False )
+    TopicId = db.Column(db.Integer, primary_key=True)
+    TopicName = db.Column(db.String(40), index=True, nullable=False)
     Infos = db.relationship("Info", backref="topic")
+    Parent = db.relationship(
+        'Topics',
+        secondary='topic_hierarchy',
+        primaryjoin='Topics.TopicId == TopicHierarchy.ChildTopicId',
+        secondaryjoin='Topics.TopicId == TopicHierarchy.ParentTopicId',
+        backref=db.backref('Children', lazy='dynamic'),
+        lazy='dynamic'
+    )
+
+
+class TopicHierarchy(db.Model):
+    __tablename__ = "topic_hierarchy"
+    ParentTopicId = db.Column(db.Integer, db.ForeignKey("topic.TopicId"), primary_key=True)
+    ChildTopicId = db.Column(db.Integer, db.ForeignKey("topic.TopicId"), primary_key=True)
+
 
 
 class User(UserMixin, db.Model):
