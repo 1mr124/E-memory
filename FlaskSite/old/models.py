@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timezone
 from FlaskSite import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(30), unique=True, index=True, nullable=False)
     email = db.Column(db.String(120), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    date_joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    date_joined = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     last_login = db.Column(db.DateTime, nullable=True)
     
     # Optional profile fields
@@ -56,7 +56,7 @@ class Topic(db.Model):
 class Info(db.Model):
     __tablename__ = "info"
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     key = db.Column(db.String(50), nullable=False, index=True, default="other")

@@ -1,0 +1,18 @@
+from flask_sqlalchemy import SQLAlchemy
+
+# Initialize the database object
+db = SQLAlchemy()
+
+# Import your models after db initialization
+from FlaskSite.models.user import User
+from FlaskSite.models.topic import Topic
+from FlaskSite.models.info import Info
+from FlaskSite.models.text import Text
+from FlaskSite.models.voice import Voice
+from FlaskSite.models.pic import Pic
+from FlaskSite.models.link import Link
+from FlaskSite.models.file import File
+from FlaskSite.models.searchKey import SearchKey
+
+
+__all__ = ['User', 'Topic', 'Info', 'Text', 'Voice', 'Pic', 'Link', 'File', 'SearchKey']
