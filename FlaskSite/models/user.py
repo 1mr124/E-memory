@@ -30,6 +30,11 @@ class User(UserMixin, db.Model):
     topics = db.relationship("Topic", backref="owner", lazy=True, cascade="all, delete-orphan")
     infos = db.relationship("Info", backref="owner", lazy=True, cascade="all, delete-orphan")
 
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.set_password(password)
+
     def set_password(self, password: str) -> None:
         """Hash and set the user's password."""
         self.password_hash = generate_password_hash(password)
