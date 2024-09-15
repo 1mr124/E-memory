@@ -10,8 +10,11 @@ class Info(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    key = db.Column(db.String(50), nullable=False, index=True, default="other")
+    key = db.Column(db.String(50), nullable=False, index=True)
 
+    __table_args__ = (
+        db.UniqueConstraint('key', 'topic_id', 'user_id', name='unique_key_topic_user'),
+    )
     # Relationships
     texts = db.relationship("Text", backref="info", lazy=True, cascade="all, delete-orphan")
     pics = db.relationship("Pic", backref="info", lazy=True, cascade="all, delete-orphan")

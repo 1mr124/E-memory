@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, request, current_app, abort
+from flask import Blueprint, jsonify, request, current_app
 from werkzeug.utils import secure_filename
 from datetime import datetime, timezone
-from FlaskSite.models import db, Text, Link, Pic, Info, SearchKey
+from FlaskSite.models import db, Text, Link, Pic, Info
 import os,json
 
 bp = Blueprint('main', __name__)
@@ -57,7 +57,7 @@ class InfoManager:
         items = []
         for link_data in links:
             item = {
-                'url': link_data.get('url'),
+                'path': link_data.get('url'),
                 'header': link_data.get('header'),
                 'comment': link_data.get('comment')
             }
@@ -121,9 +121,14 @@ def createInfo():
         if not key:
             return jsonify({"message": "Key is required"}), 400
         
-        info = Info(key=key, topic_id=topic_id, user_id=user_id, timestamp=datetime.now(timezone.utc))
-        db.session.add(info)
-        db.session.commit()  # Commit here to get the info ID for relationships
+        # Check for existing Info with the same key in the same topic
+        existingInfo = Info.query.filter_by(key=key, topic_id=topic_id, user_id=user_id).first()
+        if existingInfo:
+            info = existingInfo
+        else:
+            info = Info(key=key, topic_id=topic_id, user_id=user_id)
+            db.session.add(info)
+            db.session.commit()  # Commit here to get the info ID for relationships
 
         infoManager = InfoManager(db.session)
 
@@ -159,7 +164,7 @@ def getInfo():
                 'id': info.id,
                 'key': info.key,
                 'texts': [{'text': text.text, 'header': text.header, 'comment': text.comment} for text in info.texts],
-                'links': [{'url': link.url, 'header': link.header, 'comment': link.comment} for link in info.links],
+                'links': [{'path': link.path, 'header': link.header, 'comment': link.comment} for link in info.links],
                 'pics': [{'path': pic.path, 'header': pic.header, 'comment': pic.comment} for pic in info.pics]
             }
             for info in info_list
