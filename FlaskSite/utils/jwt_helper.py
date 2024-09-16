@@ -1,5 +1,5 @@
 import jwt as pyjwt
-import datetime
+from datetime import datetime, timezone, timedelta
 
 # Secret key for encoding and decoding the JWT token
 # move it to config.py 
@@ -12,8 +12,8 @@ def generate_token(user_id):
     """
     payload = {
         'user_id': user_id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),  # Token expiration
-        'iat': datetime.datetime.utcnow()  # Issued at time
+        'exp': datetime.now(timezone.utc) + datetime.datetime.timedelta(hours=1),  # Token expiration
+        'iat': datetime.now(timezone.utc)  # Issued at time
     }
     token = pyjwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token

@@ -11,18 +11,9 @@ def get_run_configuration():
 
 
 def generate_requirements():
-    """
-    this check if file exists and return if it is, but if adding new lip it won't update so generate it every time is better
-    if os.path.exists('requirements.txt'):
-        print("requirements.txt already exist.")
-        return
-    """
-    try:
-        with open('requirements.txt', 'w') as f:
-            subprocess.check_call([sys.executable, '-m', 'pip', 'freeze'], stdout=f)
-        print("requirements.txt generated successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to generate requirements.txt: {e}")
+    with open('requirements.txt', 'w') as f:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'freeze'], stdout=f)
+    print("requirements.txt generated successfully.")
 
 
 def install_requirements():
@@ -30,8 +21,8 @@ def install_requirements():
         generate_requirements()
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
         print("All packages installed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to install packages: {e}")
+    except Exception as e:
+        print(f"Failed to install packages due to excpetion: {e}")
 
 
 def main():
