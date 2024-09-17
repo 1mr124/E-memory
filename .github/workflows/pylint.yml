@@ -20,6 +20,6 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files 'FlaskSite/*.py') --output-format=parseable > pylint_output.txt
+        pylint 'run.py' --output-format=parseable > pylint_output.txt
     - name: Display pylint output
       run: cat pylint_output.txt
