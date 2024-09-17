@@ -22,6 +22,6 @@ jobs:
       run: ls -al
     - name: Analysing the code with pylint
       run: |
-        pylint 'run.py' --output-format=parseable > pylint_output.txt
+        pylint run.py --output-format=parseable > pylint_output.txt
     - name: Display pylint output
       run: cat pylint_output.txt
