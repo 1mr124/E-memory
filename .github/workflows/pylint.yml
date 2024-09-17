@@ -1,3 +1,4 @@
+
 name: Pylint
 
 on: [push]
@@ -18,10 +19,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
-    - name: Run Pylint
-      id: pylint
+    - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py') > pylint_output.txt
-    - name: Calculate Pylint Score
-      run: |
-        python calculate_pylint_score.py < pylint_output.txt
+        pylint $(git ls-files '*.py')
