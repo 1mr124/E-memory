@@ -1,5 +1,7 @@
 name: Pylint2
 
+run-name: Deploy by @${{ github.actor }}
+
 on: [push]
 
 jobs:
@@ -19,4 +21,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        find . -name '*.py' -exec pylint {} \;
+        pylint --fail-under=7.0 --recursive=y --enable=W
