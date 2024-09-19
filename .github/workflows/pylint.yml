@@ -22,7 +22,9 @@ jobs:
     - name: Run Pylint on current branch
       id: pylint_current
       run: |
-        pylint_score=$(pylint . --recursive=y --enable=W | grep "Your code has been rated" | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+        pylint_output=$(pylint . --recursive=y --enable=W)
+        echo "$pylint_output"
+        pylint_score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | awk '{print $7}' | sed 's/\/.*//')
         echo "Pylint score on current branch: $pylint_score"
         echo "current_score=$pylint_score" >> $GITHUB_ENV
     - name: Checkout master branch
