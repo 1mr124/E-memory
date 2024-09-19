@@ -1,1 +1,48 @@
+name: Pylint2
 
+run-name: Deploy by @${{ github.actor }}
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+    - name: Run Pylint on current branch
+      id: pylint_current
+      run: |
+        pylint . --recursive=y --enable=W | tee pylint_output.txt
+        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+        echo "Pylint score on current branch: $pylint_score"
+        echo "current_score=$pylint_score" >> $GITHUB_ENV
+    - name: Checkout master branch
+      run: |
+        git fetch origin main
+        git checkout main
+    - name: Run Pylint on master branch
+      id: pylint_master
+      run: |
+        pylint_score=$(pylint . --recursive=y --enable=W | grep "Your code has been rated" | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+        echo "Pylint score on master branch: $pylint_score"
+        echo "master_score=$pylint_score" >> $GITHUB_ENV
+    - name: Compare Pylint scores
+      run: |
+        echo "Current branch Pylint score: ${{ env.current_score }}"
+        echo "Master branch Pylint score: ${{ env.master_score }}"
+        if (( $(echo "${{ env.current_score }} < ${{ env.master_score }}" | bc -l) )); then
+          echo "Pylint score decreased! Please check the code quality."
+          exit 1
+        else
+          echo "Pylint score is good or has improved."
+        fi
