@@ -18,7 +18,6 @@ def createApp():
 
     # Load configurations
     app.config.from_pyfile("config.py")
-    app.config["IMG_FOLDER"] = "Files/imgs/"
 
     # Initialize extensions
     db.init_app(app)
