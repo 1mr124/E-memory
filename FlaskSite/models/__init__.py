@@ -11,13 +11,4 @@ from FlaskSite.models.link import Link
 from FlaskSite.models.file import File
 from FlaskSite.models.searchKey import SearchKey
 
-__all__ = [
-    'User',
-    'Topic',
-    'Info',
-    'Text',
-    'Voice',
-    'Pic',
-    'Link',
-    'File',
-    'SearchKey']
+__all__ = ["User", "Topic", "Info", "Text", "Voice", "Pic", "Link", "File", "SearchKey"]

@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+
 # from flask_cors import CORS
 
 db = SQLAlchemy()
@@ -16,8 +17,8 @@ def createApp():
     # CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Load configurations
-    app.config.from_pyfile('config.py')
-    app.config['IMG_FOLDER'] = 'Files/imgs/'
+    app.config.from_pyfile("config.py")
+    app.config["IMG_FOLDER"] = "Files/imgs/"
 
     # Initialize extensions
     db.init_app(app)
@@ -25,22 +26,22 @@ def createApp():
 
     # Register blueprints
     from FlaskSite.api.v1 import bp as api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+
+    app.register_blueprint(api_v1_bp, url_prefix="/api/v1")
 
     # Ensure database tables are created (use migrations for production)
     with app.app_context():
         # This is typically handled by migrations; use this only for initial
         # setup
         if not os.path.exists(
-            app.config['SQLALCHEMY_DATABASE_URI'].replace(
-                'sqlite:///',
-                '')):
+            app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
+        ):
             os.makedirs(
                 os.path.dirname(
-                    app.config['SQLALCHEMY_DATABASE_URI'].replace(
-                        'sqlite:///',
-                        '')),
-                exist_ok=True)
+                    app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
+                ),
+                exist_ok=True,
+            )
             db.create_all()
     jwt = JWTManager(app)
     jwt.init_app(app)

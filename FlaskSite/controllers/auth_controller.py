@@ -17,8 +17,10 @@ def login(username, password):
     try:
         (valid, token) = auth_service.login(username, password)
         if not valid:
-            return jsonify(
-                {"message": "Invalid username or password", "token": ""}), 200
+            return (
+                jsonify({"message": "Invalid username or password", "token": ""}),
+                200,
+            )
 
         return jsonify({"message": "Login successful", "token": token}), 200
     except Exception as e:

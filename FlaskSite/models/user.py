@@ -6,15 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(UserMixin, db.Model):
     """User model representing application users."""
+
     __tablename__ = "users"
 
     # Core fields
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(
-        db.String(30),
-        unique=True,
-        index=True,
-        nullable=False)
+    username = db.Column(db.String(30), unique=True, index=True, nullable=False)
     email = db.Column(db.String(120), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
@@ -25,8 +22,7 @@ class User(UserMixin, db.Model):
     # Optional profile fields
     first_name = db.Column(db.String(50), nullable=True)
     last_name = db.Column(db.String(50), nullable=True)
-    profile_picture = db.Column(db.String(500),
-                                nullable=True)  # URL to profile picture
+    profile_picture = db.Column(db.String(500), nullable=True)  # URL to profile picture
     bio = db.Column(db.String(500), nullable=True)
 
     # Status field (e.g., active, suspended)
@@ -34,15 +30,11 @@ class User(UserMixin, db.Model):
 
     # Relationships
     topics = db.relationship(
-        "Topic",
-        backref="owner",
-        lazy=True,
-        cascade="all, delete-orphan")
+        "Topic", backref="owner", lazy=True, cascade="all, delete-orphan"
+    )
     infos = db.relationship(
-        "Info",
-        backref="owner",
-        lazy=True,
-        cascade="all, delete-orphan")
+        "Info", backref="owner", lazy=True, cascade="all, delete-orphan"
+    )
 
     def __init__(self, username, email, password):
         self.username = username

@@ -18,9 +18,8 @@ def create_info(user_id, search_key, topic_id):
 
 def get_info_id(user_id, search_key, topic_id, create_if_missing=False):
     info_model = Info.query.filter_by(
-        user_id=user_id,
-        key=search_key,
-        topic_id=topic_id).first()
+        user_id=user_id, key=search_key, topic_id=topic_id
+    ).first()
     if info_model is None and create_if_missing:
         create_info(user_id, search_key, topic_id)
         return get_info_id(user_id, search_key, topic_id)
@@ -40,9 +39,9 @@ def prepare_texts(texts):
     items = []
     for text_data in texts:
         item = {
-            'text': text_data.get('text'),
-            'header': text_data.get('header'),
-            'comment': text_data.get('comment')
+            "text": text_data.get("text"),
+            "header": text_data.get("header"),
+            "comment": text_data.get("comment"),
         }
         items.append(item)
     return items
@@ -52,9 +51,9 @@ def prepare_links(links):
     items = []
     for link_data in links:
         item = {
-            'path': link_data.get('url'),
-            'header': link_data.get('header'),
-            'comment': link_data.get('comment')
+            "path": link_data.get("url"),
+            "header": link_data.get("header"),
+            "comment": link_data.get("comment"),
         }
         items.append(item)
     return items
@@ -65,13 +64,12 @@ def prepare_pics(files):
         items = []
         for file in files:
             if file and allowed_file(file.filename):
-                filename = uuid.uuid4() + file.filename.split('.')[1]
-                file_utils.save_file(
-                    current_app.config['IMG_FOLDER'], filename, file)
+                filename = uuid.uuid4() + file.filename.split(".")[1]
+                file_utils.save_file(current_app.config["IMG_FOLDER"], filename, file)
                 item = {
-                    'path': filename,
-                    'header': request.form.get("Pic-Head"),
-                    'comment': request.form.get("Pic-Comment")
+                    "path": filename,
+                    "header": request.form.get("Pic-Head"),
+                    "comment": request.form.get("Pic-Comment"),
                 }
                 items.append(item)
 
@@ -85,8 +83,12 @@ def store_items(items, db_model_class, info_id):
     try:
         for itemData in items:
             item = db_model_class(
-                **{key: itemData.get(key) for key in db_model_class.__table__.columns.keys() if key in itemData},
-                info_id=info_id
+                **{
+                    key: itemData.get(key)
+                    for key in db_model_class.__table__.columns.keys()
+                    if key in itemData
+                },
+                info_id=info_id,
             )
             db.session.add(item)
 
