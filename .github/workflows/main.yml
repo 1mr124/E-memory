@@ -28,12 +28,13 @@ jobs:
         echo "Pylint score: $pylint_score"
         echo "::set-output name=score::$pylint_score"
     - name: Generate pylint badge
-        uses: foolin/badge-action@v1
+        uses: badges/shields-action@v1.3.0
         with:
-          label: Pylint
-          status: ${{ steps.pylint.outputs.score }}
+          label: pylint
+          message: ${{ steps.pylint.outputs.score }}
           color: green
-          path: pylint_badge.svg
+          style: flat
+          output: pylint_badge.svg
 
       - name: Upload pylint badge artifact
         uses: actions/upload-artifact@v3
