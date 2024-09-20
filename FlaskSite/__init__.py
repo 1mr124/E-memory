@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 #from flask_cors import CORS
 
 db = SQLAlchemy()
@@ -31,5 +32,7 @@ def createApp():
         if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')):
             os.makedirs(os.path.dirname(app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')), exist_ok=True)
             db.create_all()
+    jwt = JWTManager(app)
+    jwt.init_app(app)
 
     return app
