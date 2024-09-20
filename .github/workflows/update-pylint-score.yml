@@ -31,7 +31,9 @@ jobs:
       run: |
         # Replace the old pylint score in README.md
         sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ steps.pylint.outputs.score }}/g" README.md
-
+    - name: Remove pylint_output.txt (cleanup)
+      run: |
+        rm pylint_output.txt
     - name: Commit changes
       run: |
         git config --global user.name "github-actions[bot]"
