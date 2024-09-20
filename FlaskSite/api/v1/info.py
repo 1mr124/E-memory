@@ -41,29 +41,14 @@ def create_info():
 @jwt_required()
 def get_info():
     """Retrieve info from the database based on a search key."""
-    searchKey = request.args.get(
+    search_key = request.args.get(
         'key')  # Get the search key from query parameters
 
-    if not searchKey:
+    if search_key is None:
         return jsonify({"message": "Search key is required"}), 400
 
     try:
-        # Query info objects that match the search key
-        info_list = Info.query.filter(Info.key.ilike(f"%{searchKey}%")).all()
-
-        # Prepare the response data
-        result = [
-            {
-                'id': info.id,
-                'key': info.key,
-                'texts': [{'text': text.text, 'header': text.header, 'comment': text.comment} for text in info.texts],
-                'links': [{'path': link.path, 'header': link.header, 'comment': link.comment} for link in info.links],
-                'pics': [{'path': pic.path, 'header': pic.header, 'comment': pic.comment} for pic in info.pics]
-            }
-            for info in info_list
-        ]
-
-        # Return the result as JSON
+        result = info_controller.get_info(search_key)
         return jsonify(result), 200
 
     except Exception as e:

@@ -1,15 +1,4 @@
-from FlaskSite.models import db, Info, Text, Link
-from flask import jsonify
 from FlaskSite.services import info_service
-from FlaskSite.utils.file_utils import allowed_file
-from werkzeug.utils import secure_filename
-from datetime import datetime, timezone
-from flask import Blueprint, jsonify, request, current_app
-from werkzeug.utils import secure_filename
-from datetime import datetime, timezone
-from FlaskSite.models import db, Text, Link, Pic, Info
-import os
-import json
 
 
 def create_info(user_id, search_key, topic_id, texts, links, files):
@@ -22,13 +11,25 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
     return True
 
 
+def get_info(search_key):
+    info_list = info_service.get_info(search_key)
+
+    result = [
+        {
+            'id': info.id,
+            'key': info.key,
+            'texts': [{'text': text.text, 'header': text.header, 'comment': text.comment} for text in info.texts],
+            'links': [{'path': link.path, 'header': link.header, 'comment': link.comment} for link in info.links],
+            'pics': [{'path': pic.path, 'header': pic.header, 'comment': pic.comment} for pic in info.pics]
+        }
+        for info in info_list
+    ]
+    return result
+
+
 def update_info():
     pass
 
 
 def delete_info():
-    pass
-
-
-def get_info():
     pass
