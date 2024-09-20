@@ -28,9 +28,9 @@ jobs:
         echo "Pylint score: $pylint_score"
         echo "::set-output name=score::$pylint_score"
     - name: Update README with new pylint score
-        run: |
-          # Replace the old pylint score in README.md
-          sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ steps.pylint.outputs.score }}/g" README.md
+      run: |
+        # Replace the old pylint score in README.md
+        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ steps.pylint.outputs.score }}/g" README.md
 
     - name: Commit changes
       run: |
