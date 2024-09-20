@@ -36,8 +36,8 @@ jobs:
         rm pylint_output.txt
     - name: Commit changes
       run: |
-        git config --global user.name "MohamedSamehMohamed"
-        git config --global user.email "m.samehmohamed123@gmail.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -b update-readme-pylint-score
         git add README.md
         git commit -m "Update pylint score in README to ${{ steps.pylint.outputs.score }}"
