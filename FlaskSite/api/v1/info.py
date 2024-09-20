@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
 from datetime import datetime, timezone
 from FlaskSite.models import db, Text, Link, Pic, Info
-import os,json
+import os
+import json
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from FlaskSite.controllers import info_controller
@@ -23,7 +24,13 @@ def create_info():
         if search_key is None:
             return jsonify({"message": "Key is required"}), 400
 
-        if info_controller.create_info(user_id, search_key, topic_id, texts, links, files):
+        if info_controller.create_info(
+                user_id,
+                search_key,
+                topic_id,
+                texts,
+                links,
+                files):
             return jsonify({"message": "Info created successfully"}), 200
         return jsonify({"message": "Failed to create info"}), 200
     except Exception as e:
@@ -34,7 +41,8 @@ def create_info():
 @jwt_required()
 def get_info():
     """Retrieve info from the database based on a search key."""
-    searchKey = request.args.get('key')  # Get the search key from query parameters
+    searchKey = request.args.get(
+        'key')  # Get the search key from query parameters
 
     if not searchKey:
         return jsonify({"message": "Search key is required"}), 400
@@ -57,7 +65,7 @@ def get_info():
 
         # Return the result as JSON
         return jsonify(result), 200
-    
+
     except Exception as e:
         # Handle errors
         print(f"Error searching info by key: {e}")

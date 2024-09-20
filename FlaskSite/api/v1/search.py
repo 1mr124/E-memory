@@ -3,11 +3,12 @@ from FlaskSite.models import db, Info, SearchKey
 
 bp = Blueprint('search', __name__)
 
+
 @bp.route('/search', methods=['GET'])
 def search():
     """Handle search operations."""
     search_key = request.args.get("searchKey")
-    
+
     if search_key:
         all_info = Info.query.filter_by(key=search_key).all()
         search_keys = [key.key for key in SearchKey.query.all()]
@@ -17,6 +18,7 @@ def search():
         }), 200
     else:
         abort(400, description="Search key is required")
+
 
 @bp.route('/edit', methods=['POST'])
 def edit_info():

@@ -23,7 +23,7 @@ def login():
     # todo add form validation
     # if not form.validate():
     #    return jsonify({"errors": form.errors}), 400
-    
+
     username = form.userName.data
     password = form.password.data
     return auth_controller.login(username, password)
