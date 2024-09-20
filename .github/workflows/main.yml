@@ -1,0 +1,42 @@
+name: Pylint Score
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+    - name: Run Pylint on current branch
+      id: pylint_current
+      run: |
+        pylint . --recursive=y --enable=W | tee pylint_output.txt
+        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+        echo "Pylint score: $pylint_score"
+        echo "::set-output name=score::$pylint_score"
+    - name: Generate pylint badge
+        uses: foolin/badge-action@v1
+        with:
+          label: Pylint
+          status: ${{ steps.pylint.outputs.score }}
+          color: green
+          path: pylint_badge.svg
+
+      - name: Upload pylint badge artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pylint-badge
+          path: pylint_badge.svg
