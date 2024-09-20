@@ -1,5 +1,6 @@
 from FlaskSite import db
 
+
 class Pic(db.Model):
     """Model representing a picture associated with an info entry."""
     __tablename__ = "pics"

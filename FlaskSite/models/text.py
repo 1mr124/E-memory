@@ -1,5 +1,6 @@
 from FlaskSite import db
 
+
 class Text(db.Model):
     """Model representing a textual content associated with an info entry."""
     __tablename__ = "texts"

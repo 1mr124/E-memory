@@ -17,7 +17,10 @@ def create_info(user_id, search_key, topic_id):
 
 
 def get_info_id(user_id, search_key, topic_id, create_if_missing=False):
-    info_model = Info.query.filter_by(user_id=user_id, key=search_key, topic_id=topic_id).first()
+    info_model = Info.query.filter_by(
+        user_id=user_id,
+        key=search_key,
+        topic_id=topic_id).first()
     if info_model is None and create_if_missing:
         create_info(user_id, search_key, topic_id)
         return get_info_id(user_id, search_key, topic_id)
@@ -63,7 +66,8 @@ def prepare_pics(files):
         for file in files:
             if file and allowed_file(file.filename):
                 filename = uuid.uuid4() + file.filename.split('.')[1]
-                file_utils.save_file(current_app.config['IMG_FOLDER'], filename, file)
+                file_utils.save_file(
+                    current_app.config['IMG_FOLDER'], filename, file)
                 item = {
                     'path': filename,
                     'header': request.form.get("Pic-Head"),
