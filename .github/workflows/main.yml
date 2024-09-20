@@ -27,17 +27,23 @@ jobs:
         pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
         echo "Pylint score: $pylint_score"
         echo "::set-output name=score::$pylint_score"
-    - name: Generate pylint badge
-        uses: badges/shields-action@v1.3.0
-        with:
-          label: pylint
-          message: ${{ steps.pylint.outputs.score }}
-          color: green
-          style: flat
-          output: pylint_badge.svg
+    - name: Update README with new pylint score
+      run: |
+        # Replace the old pylint score in README.md
+        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ steps.pylint.outputs.score }}/g" README.md
 
-      - name: Upload pylint badge artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: pylint-badge
-          path: pylint_badge.svg
+    - name: Commit changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b update-readme-pylint-score
+        git add README.md
+        git commit -m "Update pylint score in README to ${{ steps.pylint.outputs.score }}"
+        git push origin update-readme-pylint-score
+
+    - name: Create pull request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        branch: update-readme-pylint-score
+        title: "Update pylint score in README"
+        body: "This pull request updates the pylint score in the README file."
