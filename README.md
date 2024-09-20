@@ -1,2 +1,2 @@
 
-Pylint score: 9.5
+pylint score: 9.5
