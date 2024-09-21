@@ -8,27 +8,32 @@ import Pic from './Pic';
 const InfoContainer = () => {
     const [activeInput, setActiveInput] = useState('text');
 
-    const renderInput = () => {
-        switch (activeInput) {
-            case 'text':
-                return <Text />;
-            case 'link':
-                return <Link />;
-            case 'pics':
-                return <Pic />;
-            default:
-                return null;
-        }
-    };
-
-    return (
-        <Container>
-            <Navigation activeInput={activeInput} setActiveInput={setActiveInput} /> 
-            <Form>{renderInput()}</Form>
-            <SubmitButton type="submit">Add Info</SubmitButton>
-        </Container>
-    );
-};
+     // State to hold text, link, and pic inputs
+     const [texts, setTexts] = useState([{ headline: '', text: '', comment: '' }]);
+     const [links, setLinks] = useState([{ headline: '', link: '', comment: '' }]);
+     const [pics, setPics] = useState([{ headline: '', pic: '', comment: '' }]); // If you have a pic component
+ 
+     const renderInput = () => {
+         switch (activeInput) {
+             case 'text':
+                 return <Text texts={texts} setTexts={setTexts} />;
+             case 'link':
+                 return <Link links={links} setLinks={setLinks} />;
+             case 'pics':
+                 return <Pic pics={pics} setPics={setPics} />;
+             default:
+                 return null;
+         }
+     };
+ 
+     return (
+         <Container>
+             <Navigation activeInput={activeInput} setActiveInput={setActiveInput} />
+             <Form>{renderInput()}</Form>
+             <SubmitButton type="submit">Add Info</SubmitButton>
+         </Container>
+     );
+ };
 
 const Container = styled.div`
     display: flex;

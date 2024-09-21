@@ -143,8 +143,7 @@ const ButtonContainer = styled.div`
     gap: 10px;
 `;
 
-const Text = () => {
-    const [texts, setTexts] = useState([{ headline: '', text: '', comment: '' }]);
+const Text = ({ texts, setTexts }) => {
     const [visibleIndex, setVisibleIndex] = useState(0);
 
     const handleChange = (index, field, value) => {
@@ -156,7 +155,7 @@ const Text = () => {
     const addText = (e) => {
         e.preventDefault(); // Prevent page reload
         setTexts([...texts, { headline: '', text: '', comment: '' }]);
-        setTimeout(() => setVisibleIndex(texts.length), 0); // Focus on new input after rendering
+        setVisibleIndex(texts.length); // Show the new input
     };
 
     const toggleVisible = (e, index) => {
