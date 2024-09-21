@@ -13,7 +13,7 @@ const NavbarContainer = styled.header`
   font-family: 'Open Sans', sans-serif !important;
   font-weight: bold;
   height: 80px;
-
+  margin-bottom: 29px;
   @media (max-width: 600px) {
     height: auto;
     padding: 20px 0;
