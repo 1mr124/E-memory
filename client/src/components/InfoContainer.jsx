@@ -8,6 +8,11 @@ import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
     const [activeInput, setActiveInput] = useState('text');
+       const navItems = [
+        { label: 'Text', value: 'text' },
+        { label: 'Link', value: 'link' },
+        { label: 'Pics', value: 'pics' }
+    ];
 
      // State to hold text, link, and pic inputs
      const [texts, setTexts] = useState([{ headline: '', text: '', comment: '' }]);
@@ -29,8 +34,8 @@ const InfoContainer = () => {
  
      return (
          <Container>
-             <Navigation activeInput={activeInput} setActiveInput={setActiveInput} />
-             <Form>{renderInput()}</Form>
+            <Navigation activeInput={activeInput} setActiveInput={setActiveInput} navItems={navItems} />
+            <Form>{renderInput()}</Form>
              <InfoSearchKey />
              <SubmitButton type="submit">Add Info</SubmitButton>
          </Container>
