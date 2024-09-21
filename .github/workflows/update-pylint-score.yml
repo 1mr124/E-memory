@@ -58,28 +58,3 @@ jobs:
         else
           echo "No changes to commit."
         fi
-
-    # Step 7: Create pull request
-    - name: Create pull request
-      id: create_pr
-      uses: peter-evans/create-pull-request@v5
-      with:
-        branch: update-readme-pylint-score
-        base: main
-        title: "Update pylint score in README"
-        body: "This pull request updates the pylint score in the README file."
-
-    # Step 8: Merge pull request
-    - name: Merge pull request
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add this line
-      run: |
-        pr_number=$(gh pr list --state open --json number,title,body --jq '.[] | select(.title | contains("Update pylint score in README") or .body | contains("Update pylint score in README")) | .number')
-        if [ -n "$pr_number" ]; then
-          gh pr merge "$pr_number" --merge
-        else
-          echo "No pull request found to merge."
-        fi
-    - name: Delete branch
-      run: |
-        git push origin --delete update-readme-pylint-score
