@@ -1,7 +1,9 @@
 from FlaskSite import db
 
+
 class Voice(db.Model):
     """Model representing a voice recording associated with an information entry."""
+
     __tablename__ = "voices"
 
     # Core fields

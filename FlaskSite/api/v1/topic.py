@@ -4,6 +4,7 @@ from FlaskSite.models import db, Topic, SearchKey, Info
 
 bp = Blueprint('topic', __name__)
 
+
 @bp.route('/create', methods=['POST'])
 def create_topic():
     """Handle topic creation."""
@@ -20,6 +21,7 @@ def create_topic():
             return jsonify({"message": "An error occurred"}), 500
     else:
         return jsonify({"errors": form.errors}), 400
+
 
 @bp.route('/delete', methods=['POST'])
 def delete_topic():
@@ -38,6 +40,7 @@ def delete_topic():
     else:
         return jsonify({"message": "Topic not found"}), 404
 
+
 @bp.route('/search', methods=['POST'])
 def search_topic():
     """Handle topic search."""
@@ -48,7 +51,8 @@ def search_topic():
         topic_id = topic.id
         search_keys = [i.key for i in SearchKey.query.all()]
         all_info = Info.query.filter_by(topic_id=topic_id).all()
-        info_list = [{"id": info.id, "data": info.data} for info in all_info]  # Adjust based on Info model fields
+        info_list = [{"id": info.id, "data": info.data}
+                     for info in all_info]  # Adjust based on Info model fields
         return jsonify({"info": info_list, "search_keys": search_keys}), 200
     else:
         return jsonify({"message": "Topic not found"}), 404
