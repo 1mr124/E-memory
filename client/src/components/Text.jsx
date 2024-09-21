@@ -37,6 +37,7 @@ const TextWrapper = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: center;
+    width:80%;
 `;
 
 const Headline = styled.input`
@@ -47,6 +48,8 @@ const Headline = styled.input`
     outline: none;
     padding: 10px;
     text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
 `;
 
 const Comment = styled.input`
@@ -57,17 +60,22 @@ const Comment = styled.input`
     outline: none;
     padding: 10px;
     text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
 `;
 
 const TextArea = styled.textarea`
     width: 80%;
-    background-color: transparent;
+    background-color: #15202b;
     color: #e0f7fa;
     border: none;
     outline: none;
     padding: 10px;
     resize: none;
     text-align: center;
+    height: 300px;
+    border-radius: 10px;
+
 `;
 
 const CollapsedButton = styled.button`
@@ -145,16 +153,19 @@ const Text = () => {
         setTexts(newTexts);
     };
 
-    const addText = () => {
+    const addText = (e) => {
+        e.preventDefault(); // Prevent page reload
         setTexts([...texts, { headline: '', text: '', comment: '' }]);
-        setVisibleIndex(texts.length); // Show the new text input
+        setTimeout(() => setVisibleIndex(texts.length), 0); // Focus on new input after rendering
     };
 
-    const toggleVisible = (index) => {
+    const toggleVisible = (e, index) => {
+        e.preventDefault(); // Prevent page reload
         setVisibleIndex(index);
     };
 
-    const deleteText = (index) => {
+    const deleteText = (e, index) => {
+        e.preventDefault(); // Prevent page reload
         const newTexts = texts.filter((_, i) => i !== index);
         setTexts(newTexts);
         if (visibleIndex >= index) {
@@ -167,11 +178,11 @@ const Text = () => {
             <ButtonsContainer>
     {texts.map((_, index) => (
         <CollapsedContainer key={index}>
-            <CollapsedButton onClick={() => toggleVisible(index)}>
+            <CollapsedButton onClick={(e) => toggleVisible(e,index)}>
                 Text {index + 1}
             </CollapsedButton>
             {index !== 0 && (
-                <DeleteButton onClick={() => deleteText(index)}>
+                <DeleteButton onClick={(e) => deleteText(e, index)}>
                     <FaTrashAlt />
                 </DeleteButton>
             )}
