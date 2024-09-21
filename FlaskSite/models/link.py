@@ -1,7 +1,9 @@
 from FlaskSite import db
 
+
 class Link(db.Model):
     """Model representing a link associated with an info entry."""
+
     __tablename__ = "links"
 
     # Core fields
