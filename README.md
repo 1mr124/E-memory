@@ -2,4 +2,4 @@
 pylint score: 9.5
 
 
-#EveryThing is connected 
+# EveryThing is connected 
