@@ -59,7 +59,7 @@ const NavbarLink = styled.li`
     }
 
     &:hover {
-      color: #ffdd00;
+      color: #1da1f2;
     }
   }
 `;
@@ -157,7 +157,7 @@ const RightLine = styled.div`
 `;
 
 // Main Navbar Component
-const Navbar = () => {
+const CenterAlignedNavbar = () => {
   return (
     <NavbarContainer>
       <NavbarContent>
@@ -185,4 +185,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default CenterAlignedNavbar;
