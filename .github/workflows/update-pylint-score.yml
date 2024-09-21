@@ -58,3 +58,15 @@ jobs:
         else
           echo "No changes to commit."
         fi
+        
+    # Step 7: Create pull request
+    - name: Create pull request
+      id: create_pr
+      uses: peter-evans/create-pull-request@v5
+      with:
+        branch: update-readme-pylint-score
+        base: main
+        title: "Update pylint score in README"
+        body: "This pull request updates the pylint score in the README file."
+
+
