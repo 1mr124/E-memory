@@ -39,7 +39,7 @@ jobs:
     # Step 5: Update README with new pylint score
     - name: Update README with new pylint score
       run: |
-        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ env.score }}/g" README.md
+         echo "Pylint score: ${{ env.score }}" >> README.md
 
     # Step 6: Clean up pylint output
     - name: Remove pylint_output.txt (cleanup)
