@@ -14,6 +14,12 @@ const NavbarContainer = styled.header`
   z-index: 100;
   font-family: 'Open Sans', sans-serif !important;
   font-weight: bold;
+  height: 80px;
+
+  @media (max-width: 600px) {
+    height: auto;
+    padding: 20px 0;
+  }
 `;
 
 const NavbarContent = styled.nav`
@@ -21,6 +27,12 @@ const NavbarContent = styled.nav`
   justify-content: space-between;
   align-items: center;
   position: relative; /* To position the lines connecting to logo */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+
+  @media (max-width: 600px) {
+    flex-direction: row;
+    align-items: center;
+  }
 `;
 
 const NavbarLinks = styled.ul`
@@ -29,6 +41,11 @@ const NavbarLinks = styled.ul`
   gap: 20px;
   margin: 0;
   padding: 0;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 10px; /* Adjust gap for smaller screens */
+  }
 `;
 
 const NavbarLink = styled.li`
@@ -36,6 +53,11 @@ const NavbarLink = styled.li`
     color: white;
     text-decoration: none;
     font-size: 1.4em;
+
+    @media (max-width: 600px) {
+      font-size: 1.2em; /* Reduce font size on smaller screens */
+    }
+
     &:hover {
       color: #ffdd00;
     }
@@ -49,11 +71,19 @@ const LogoContainer = styled.div`
   justify-content: center;
   cursor: pointer;
   padding: 0 20px; /* Add some space around the logo */
+
+  @media (max-width: 600px) {
+    margin-bottom: 10px; /* Add space below logo for smaller screens */
+  }
 `;
 
 const LogoImage = styled.img`
-  width: 124px;
+  width: 100px;
   padding: 0 43px;
+
+  @media (max-width: 600px) {
+    width: 80px; /* Adjust logo size on smaller screens */
+  }
 `;
 
 const LeftLine = styled.div`
@@ -61,73 +91,70 @@ const LeftLine = styled.div`
   height: 2.8px;
   background-color: black;
   top: 31%;
-  left: -86px;
+  left: -88px;
   right: auto;
-  width: 85%;
+  width: 89%;
 
   /* Vertical line at the end of the left line */
   &::after {
     content: '';
     position: absolute;
-    right: 210px;
+    right: 198px;
     top: 0;
     width: 2.8px;
-    height: 25px;
+    height: 23px;
     background-color: black;
   }
-   /* Small horizontal line at the bottom of the vertical line */
+  /* Small horizontal line at the bottom of the vertical line */
   &::before {
     content: '';
     position: absolute;
-   right: 199px;
-    top: 24px;
+    right: 187px;
+    top: 20px;
     width: 22px;
     height: 2.8px;
     background-color: black;
   }
-
-  
+    @media (max-width: 600px) {
+    display:none;
+  }
 `;
 
 const RightLine = styled.div`
   position: absolute;
-    height: 2.8px;
-    background-color: black;
-    top: 73%;
-    left: 124px;
-    right: auto;
-    width: 83%;
+  height: 2.8px;
+  background-color: black;
+  top: 73%;
+  left: 114px;
+  right: auto;
+  width: 86%;
 
   /* Vertical line at the start of the right line */
   &::after {
     content: '';
     position: absolute;
-    left: 196px;
-    top: -25px;
+    left: 183px;
+    top: -20px;
     width: 21px;
     height: 2.8px;
     background-color: black;
   }
 
-
   /* Small horizontal line at the top of the vertical line */
   &::before {
-   content: '';
+    content: '';
     position: absolute;
-    left: 205px;
-    top: -22px;
+    left: 192px;
+    top: -20px;
     width: 2.8px;
-    height: 23px;
+    height: 22px;
     background-color: black;
   }
-
-  
-
+  @media (max-width: 600px) {
+    display:none;
+  }
 
 `;
-
-
-
 
 // Main Navbar Component
 const Navbar = () => {
@@ -146,7 +173,6 @@ const Navbar = () => {
           {/* Lines connecting the logo to the sides */}
           <LeftLine />
           <RightLine />
-
         </LogoContainer>
 
         {/* Right side links */}
