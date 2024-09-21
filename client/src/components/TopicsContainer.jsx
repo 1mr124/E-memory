@@ -78,7 +78,7 @@ const TopicsContainer = () => {
 // Search Input Component
 const SearchInput = ({ searchTerm, setSearchTerm }) => {
     return (
-        <InputContainer>
+        <Form>
             <Input
                 type="text"
                 placeholder="Search topics..."
@@ -87,7 +87,7 @@ const SearchInput = ({ searchTerm, setSearchTerm }) => {
             />
             <SubmitButton type="submit">Search Topic</SubmitButton>
 
-        </InputContainer>
+        </Form>
     );
 };
 
