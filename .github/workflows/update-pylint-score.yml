@@ -54,7 +54,7 @@ jobs:
         git checkout -b update-readme-pylint-score
         git add README.md
         git commit -m "Update pylint score in README to ${{ env.score }}"
-        git push origin update-readme-pylint-score-${{ github.run_id }}
+        git push origin update-readme-pylint-score
 
     # Step 8: Create pull request
     - name: Create pull request
@@ -77,3 +77,6 @@ jobs:
         else
           echo "No pull request found to merge."
         fi
+    - name: Delete branch
+      run: |
+        git push origin --delete update-readme-pylint-score
