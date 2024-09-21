@@ -1,6 +1,4 @@
-name: Pylint Quality Check # i added the --disable=C0103 to ignore the convention checks till we are good with everything first  
-
-run-name: Deploy by @${{ github.actor }}
+name: Pylint Quality Check #--disable=C0103 to ignore the convention checks till we are good with everything first
 
 on: [push]
 
@@ -54,7 +52,7 @@ jobs:
         echo "Main branch Pylint score: ${{ env.master_score }}"
         if (( $(echo "${{ env.current_score }} < ${{ env.master_score }}" | bc -l) )); then
           echo "Pylint score decreased! Please check the code quality."
-          #exit 1
+          exit 1
         else
           echo "Pylint score is good or has improved."
         fi

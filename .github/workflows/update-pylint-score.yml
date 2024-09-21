@@ -1,4 +1,4 @@
-name: Pylint Score
+name: Update Pylint Score
 
 on:
   push:
@@ -69,6 +69,9 @@ jobs:
     # Step 9: Merge pull request
     - name: Merge pull request
       run: |
-        gh pr merge ${{ steps.create_pr.outputs.pull-request-url }} --merge
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        pr_number=$(gh pr list --state open --json number --jq '.[0].number')
+        if [ -n "$pr_number" ]; then
+          gh pr merge "$pr_number" --merge
+        else
+          echo "No pull request found to merge."
+        fi
