@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
 
 const NavbarContainer = styled.header`
   position: sticky;
@@ -67,10 +69,10 @@ const Navbar = () => {
     <NavbarContainer>
       <NavbarContent>
         <NavbarLinks>
-          <NavbarLink><a href="#link1">Info</a></NavbarLink>
-          <NavbarLink><a href="#link2">Search</a></NavbarLink>
-          <NavbarLink><a href="#link3">Topics</a></NavbarLink>
-          <NavbarLink><a href="#link4">Account</a></NavbarLink>
+          <NavbarLink><Link to="/info">Info</Link></NavbarLink>
+          <NavbarLink><Link to="/search">Search</Link></NavbarLink>
+          <NavbarLink><Link to="/topics">Topics</Link></NavbarLink>
+          <NavbarLink><Link to="/account">Account</Link></NavbarLink>
         </NavbarLinks>
       </NavbarContent>
     </NavbarContainer>
