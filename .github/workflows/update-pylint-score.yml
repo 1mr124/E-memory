@@ -47,10 +47,15 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -b update-readme-pylint-score
-        echo "Pylint score: ${{ env.score }}" >> README.md
+        echo "Pylint score: $score" >> README.md
         git add README.md
-        git commit -m "Update pylint score in README to ${{ env.score }}"
-        git push origin update-readme-pylint-score
+        echo "Score to commit: $score"
+        if ! git diff-index --quiet HEAD --; then
+          git commit -m "Update pylint score in README to $score"
+          git push origin update-readme-pylint-score
+        else
+          echo "No changes to commit."
+        fi
 
     # Step 7: Create pull request
     - name: Create pull request
