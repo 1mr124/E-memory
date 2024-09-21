@@ -5,47 +5,70 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Check out code
     - uses: actions/checkout@v2
+
+    # Step 2: Set up Python 3.9
     - name: Set up Python 3.9
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: '3.9'
+
+    # Step 3: Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+
+    # Step 4: Run Pylint on current branch and capture score
     - name: Run Pylint on current branch
       id: pylint_current
       run: |
-        pylint . --recursive=y --enable=W | tee pylint_output.txt
+        pylint . --enable=W | tee pylint_output.txt
         pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
         echo "Pylint score: $pylint_score"
-        echo "::set-output name=score::$pylint_score"
+        echo "score=$pylint_score" >> $GITHUB_ENV
+
+    # Step 5: Update README with new pylint score
     - name: Update README with new pylint score
       run: |
-        # Replace the old pylint score in README.md
-        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ steps.pylint.outputs.score }}/g" README.md
+        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ env.score }}/g" README.md
+
+    # Step 6: Clean up pylint output
     - name: Remove pylint_output.txt (cleanup)
       run: |
         rm pylint_output.txt
+
+    # Step 7: Commit changes and push to a new branch
     - name: Commit changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b update-readme-pylint-score
+        git checkout -b update-readme-pylint-score-${{ github.run_id }}
         git add README.md
-        git commit -m "Update pylint score in README to ${{ steps.pylint.outputs.score }}"
-        git push origin update-readme-pylint-score
+        git commit -m "Update pylint score in README to ${{ env.score }}"
+        git push origin update-readme-pylint-score-${{ github.run_id }}
 
+    # Step 8: Create pull request
     - name: Create pull request
+      id: create_pr
       uses: peter-evans/create-pull-request@v5
       with:
-        branch: update-readme-pylint-score
+        branch: update-readme-pylint-score-${{ github.run_id }}
+        base: main
         title: "Update pylint score in README"
         body: "This pull request updates the pylint score in the README file."
+
+    # Step 9: Merge pull request
+    - name: Merge pull request
+      run: |
+        gh pr merge ${{ steps.create_pr.outputs.pull-request-url }} --merge
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
