@@ -1,12 +1,15 @@
 import React from 'react';
-import Navbar from './components/Navbar';
+import CenterAlignedNavbar from './components/CenterAlignedNavbar';
+import BasicNavBar from './components/BasicNavBar';
+
 import './App.css';
 import Container from './components/Container';
 
 const App = () => {
   return (
     <div className="App">
-      <Navbar />
+      {/* <CenterAlignedNavbar /> */}
+      <BasicNavBar />
       <Container/>
     </div>
   );
