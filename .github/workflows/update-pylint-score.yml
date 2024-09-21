@@ -36,27 +36,23 @@ jobs:
         echo "Pylint score: $pylint_score"
         echo "score=$pylint_score" >> $GITHUB_ENV
 
-    # Step 5: Update README with new pylint score
-    - name: Update README with new pylint score
-      run: |
-         echo "Pylint score: ${{ env.score }}" >> README.md
-
-    # Step 6: Clean up pylint output
+    # Step 5: Clean up pylint output
     - name: Remove pylint_output.txt (cleanup)
       run: |
         rm pylint_output.txt
 
-    # Step 7: Commit changes and push to a new branch
+    # Step 6: Commit changes and push to a new branch
     - name: Commit changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -b update-readme-pylint-score
+        echo "Pylint score: ${{ env.score }}" >> README.md
         git add README.md
         git commit -m "Update pylint score in README to ${{ env.score }}"
         git push origin update-readme-pylint-score
 
-    # Step 8: Create pull request
+    # Step 7: Create pull request
     - name: Create pull request
       id: create_pr
       uses: peter-evans/create-pull-request@v5
@@ -66,7 +62,7 @@ jobs:
         title: "Update pylint score in README"
         body: "This pull request updates the pylint score in the README file."
 
-    # Step 9: Merge pull request
+    # Step 8: Merge pull request
     - name: Merge pull request
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add this line
