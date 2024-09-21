@@ -68,6 +68,8 @@ jobs:
 
     # Step 9: Merge pull request
     - name: Merge pull request
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add this line
       run: |
         pr_number=$(gh pr list --state open --json number --jq '.[0].number')
         if [ -n "$pr_number" ]; then
