@@ -9,7 +9,10 @@ class Topic(db.Model):
     # Core fields
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False, index=True)
-    parent_topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"), nullable=True)
+    parent_topic_id = db.Column(
+        db.Integer,
+        db.ForeignKey("topics.id"),
+        nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     # Self-referential relationship for nested topics
@@ -18,7 +21,11 @@ class Topic(db.Model):
     )
 
     # Relationship with Info
-    infos = db.relationship("Info", backref="topic", lazy=True, cascade="all, delete")
+    infos = db.relationship(
+        "Info",
+        backref="topic",
+        lazy=True,
+        cascade="all, delete")
 
     def __repr__(self):
         """Provide a string representation of the Topic instance."""

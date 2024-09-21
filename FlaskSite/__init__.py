@@ -37,8 +37,9 @@ def createApp():
         ):
             os.makedirs(
                 os.path.dirname(
-                    app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
-                ),
+                    app.config["SQLALCHEMY_DATABASE_URI"].replace(
+                        "sqlite:///",
+                        "")),
                 exist_ok=True,
             )
             db.create_all()

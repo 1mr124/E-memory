@@ -11,7 +11,11 @@ class User(UserMixin, db.Model):
 
     # Core fields
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), unique=True, index=True, nullable=False)
+    username = db.Column(
+        db.String(30),
+        unique=True,
+        index=True,
+        nullable=False)
     email = db.Column(db.String(120), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
@@ -22,7 +26,8 @@ class User(UserMixin, db.Model):
     # Optional profile fields
     first_name = db.Column(db.String(50), nullable=True)
     last_name = db.Column(db.String(50), nullable=True)
-    profile_picture = db.Column(db.String(500), nullable=True)  # URL to profile picture
+    profile_picture = db.Column(db.String(500),
+                                nullable=True)  # URL to profile picture
     bio = db.Column(db.String(500), nullable=True)
 
     # Status field (e.g., active, suspended)

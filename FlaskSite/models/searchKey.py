@@ -4,7 +4,9 @@ from FlaskSite import db
 class SearchKey(db.Model):
     """Model representing a search keyword used for indexing information."""
 
-    __tablename__ = "searchkeys"  # Renamed to be more descriptive and consistent with plural naming conventions
+    # Renamed to be more descriptive and consistent with plural naming
+    # conventions
+    __tablename__ = "searchkeys"
 
     # Core fields
     # Changed to 'id' for consistency

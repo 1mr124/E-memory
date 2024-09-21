@@ -65,7 +65,8 @@ def prepare_pics(files):
         for file in files:
             if file and allowed_file(file.filename):
                 filename = uuid.uuid4() + file.filename.split(".")[1]
-                file_utils.save_file(current_app.config["IMG_FOLDER"], filename, file)
+                file_utils.save_file(
+                    current_app.config["IMG_FOLDER"], filename, file)
                 item = {
                     "path": filename,
                     "header": request.form.get("Pic-Head"),

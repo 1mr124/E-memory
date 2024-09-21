@@ -6,4 +6,6 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     file_url = db.Column(db.String(500), nullable=False)
-    file_type = db.Column(db.String(50), nullable=False)  # e.g., "image", "voice"
+    file_type = db.Column(
+        db.String(50),
+        nullable=False)  # e.g., "image", "voice"

@@ -10,12 +10,19 @@ class Info(db.Model):
     # Core fields
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"), nullable=False)
+    topic_id = db.Column(
+        db.Integer,
+        db.ForeignKey("topics.id"),
+        nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     key = db.Column(db.String(50), nullable=False, index=True)
 
     __table_args__ = (
-        db.UniqueConstraint("key", "topic_id", "user_id", name="unique_key_topic_user"),
+        db.UniqueConstraint(
+            "key",
+            "topic_id",
+            "user_id",
+            name="unique_key_topic_user"),
     )
     # Relationships
     texts = db.relationship(

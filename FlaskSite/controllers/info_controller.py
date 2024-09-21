@@ -14,16 +14,17 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
 def get_info(search_key):
     info_list = info_service.get_info(search_key)
 
-    result = [
-        {
-            'id': info.id,
-            'key': info.key,
-            'texts': [{'text': text.text, 'header': text.header, 'comment': text.comment} for text in info.texts],
-            'links': [{'path': link.path, 'header': link.header, 'comment': link.comment} for link in info.links],
-            'pics': [{'path': pic.path, 'header': pic.header, 'comment': pic.comment} for pic in info.pics]
-        }
-        for info in info_list
-    ]
+    result = [{'id': info.id,
+               'key': info.key,
+               'texts': [{'text': text.text,
+                          'header': text.header,
+                          'comment': text.comment} for text in info.texts],
+               'links': [{'path': link.path,
+                          'header': link.header,
+                          'comment': link.comment} for link in info.links],
+               'pics': [{'path': pic.path,
+                         'header': pic.header,
+                         'comment': pic.comment} for pic in info.pics]} for info in info_list]
     return result
 
 
