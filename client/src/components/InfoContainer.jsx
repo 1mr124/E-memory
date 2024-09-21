@@ -4,6 +4,7 @@ import Navigation from './Navigation'; // Import Navigation
 import Text from './Text';
 import Link from './Link';
 import Pic from './Pic';
+import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
     const [activeInput, setActiveInput] = useState('text');
@@ -30,6 +31,7 @@ const InfoContainer = () => {
          <Container>
              <Navigation activeInput={activeInput} setActiveInput={setActiveInput} />
              <Form>{renderInput()}</Form>
+             <InfoSearchKey />
              <SubmitButton type="submit">Add Info</SubmitButton>
          </Container>
      );
@@ -47,7 +49,7 @@ const Container = styled.div`
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     margin: auto; /* Center horizontally */
-    height:665px;
+    height:710px;
 `;
 
 const Nav = styled.nav`
