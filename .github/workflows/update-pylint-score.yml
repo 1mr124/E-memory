@@ -36,44 +36,25 @@ jobs:
         echo "Pylint score: $pylint_score"
         echo "score=$pylint_score" >> $GITHUB_ENV
 
-    # Step 5: Update README with new pylint score
-    - name: Update README with new pylint score
-      run: |
-        sed -i "s/pylint score: [0-9\.]*/pylint score: ${{ env.score }}/g" README.md
-
-    # Step 6: Clean up pylint output
+    # Step 5: Clean up pylint output
     - name: Remove pylint_output.txt (cleanup)
       run: |
         rm pylint_output.txt
 
-    # Step 7: Commit changes and push to a new branch
+    # Step 6: Commit changes and push to a new branch
     - name: Commit changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b update-readme-pylint-score-${{ github.run_id }}
+        git checkout main
+        sed -i "s/pylint score: [0-9\.]*/pylint score: $score/g" README.md
         git add README.md
-        git commit -m "Update pylint score in README to ${{ env.score }}"
-        git push origin update-readme-pylint-score-${{ github.run_id }}
-
-    # Step 8: Create pull request
-    - name: Create pull request
-      id: create_pr
-      uses: peter-evans/create-pull-request@v5
-      with:
-        branch: update-readme-pylint-score-${{ github.run_id }}
-        base: main
-        title: "Update pylint score in README"
-        body: "This pull request updates the pylint score in the README file."
-
-    # Step 9: Merge pull request
-    - name: Merge pull request
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Add this line
-      run: |
-        pr_number=$(gh pr list --state open --json number --jq '.[0].number')
-        if [ -n "$pr_number" ]; then
-          gh pr merge "$pr_number" --merge
+        echo "Score to commit: $score"
+        echo "Contents of README after update:"
+        cat README.md
+        if ! git diff-index --quiet HEAD --; then
+          git commit -m "Update pylint score in README to $score"
+          git push origin main
         else
-          echo "No pull request found to merge."
+          echo "No changes to commit."
         fi
