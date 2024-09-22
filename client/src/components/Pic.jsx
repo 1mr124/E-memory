@@ -72,9 +72,6 @@ const UploadContainer = styled.div`
     border-radius: 8px;
     cursor: pointer;
 
-    &:hover {
-        background-color: #1da1f2; // Change background color on hover
-    }
 `;
 
 const UploadText = styled.span`
@@ -134,6 +131,17 @@ const CollapsedContainer = styled.div`
     border-radius: 5px;
 `;
 
+const UploadIcon = styled(FaUpload)`
+    transition: color 0.3s;
+    margin: 0px 3px 3px 0;
+
+
+    ${UploadContainer}:hover & {
+        color: #1da1f2; // Change icon color on hover
+        margin:0px 3px 6px 0;
+    }
+`;
+
 const Pic = ({ pics, setPics }) => {
     const [visibleIndex, setVisibleIndex] = useState(0);
 
@@ -190,8 +198,8 @@ const Pic = ({ pics, setPics }) => {
                                 placeholder="Headline"
                             />
                             <UploadContainer onClick={() => alert('Upload an image')}>
-                                <FaUpload size={40} />
-                                <UploadText>Upload Image</UploadText>
+                            <UploadIcon size={40} />
+                            <UploadText>Upload Image</UploadText>
                             </UploadContainer>
                             <Comment
                                 value={pic.comment}
