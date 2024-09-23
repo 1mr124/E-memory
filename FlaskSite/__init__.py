@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from FlaskSite.utils.file_utils import writeToFile, createNewFolder, fileExists  # Import utilities
 from flask_cors import CORS
 
 db = SQLAlchemy()
@@ -15,8 +16,24 @@ def createApp():
     # Enable CORS (Adjust as needed)
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) # restrict it to specific origins React deafult clinet 
 
+    configPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.py')
     # Load configurations
-    app.config.from_pyfile("config.py")
+    if not fileExists(configPath):
+        print("config is not found")
+        content = (
+        "import os\n"
+        "# Default configuration settings\n"
+        "DEBUG = False\n"
+        "SECRET_KEY = 'Make It Hard'\n"
+        "BASE_DIR = os.path.abspath(os.path.dirname(__file__))\n"
+        "SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'site.db')\n"
+        "IMG_FOLDER = os.path.join(BASE_DIR, 'instance', 'uploads')\n"
+            )
+        
+        writeToFile(configPath, content)
+        print(f"config.py created with default settings.")
+
+    app.config.from_pyfile(configPath)
 
     # Initialize extensions
     db.init_app(app)
@@ -29,9 +46,14 @@ def createApp():
 
     # Ensure database tables are created (use migrations for production)
     with app.app_context():
-        # This is typically handled by migrations; use this only for initial
-        # setup
-        if not os.path.exists(
+        # This is typically handled by migrations; use this only for initial setup
+        
+        # Create uploads folder if it doesn't exist
+        uploadsFolder = app.config["IMG_FOLDER"]
+        if not fileExists(uploadsFolder):
+            createNewFolder(uploadsFolder)
+
+        if not fileExists(
             app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
         ):
             os.makedirs(
@@ -42,7 +64,8 @@ def createApp():
                 exist_ok=True,
             )
             db.create_all()
-    jwt = JWTManager(app)
-    jwt.init_app(app)
+
+    jwt = JWTManager() # Initialize the JWT manager object, istated of initializing JWTManager twice
+    jwt.init_app(app) # Then bind it to the app
 
     return app

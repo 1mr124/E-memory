@@ -12,8 +12,11 @@ def get_run_configuration():
 
 def generate_requirements():
     with open('requirements.txt', 'w') as f:
-        subprocess.check_call(
-            [sys.executable, '-m', 'pip', 'freeze'], stdout=f)
+        subprocess.run(
+            [sys.executable, '-m', 'pip', 'freeze'],
+            stdout=f,                     # Redirect stdout to the file
+            stderr=subprocess.DEVNULL      # Suppress stderr (errors)
+        )
     print("requirements.txt generated successfully.")
 
 
@@ -21,7 +24,10 @@ def install_requirements():
     try:
         generate_requirements()
         subprocess.check_call(
-            [sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+            [sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'],
+            stdout=subprocess.DEVNULL,  # Suppress stdout
+            stderr=subprocess.DEVNULL   # Suppress stderr
+            )
         print("All packages installed successfully.")
     except Exception as e:
         print(f"Failed to install packages due to excpetion: {e}")
