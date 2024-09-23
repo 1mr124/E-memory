@@ -83,10 +83,11 @@ const SearchContainer = () => {
       try {
           console.log("Fetching results...");
           const response = await api.get(`/search?searchKey=${searchTerm}`);
-  
+            
           // Check if response contains the 'all_info' property and is an array
           if (response.data && Array.isArray(response.data.all_info)) {
-              setResults(response.data.all_info); // Set results from 'all_info'
+            console.log(response.data.all_info);
+            setResults(response.data.all_info); // Set results from 'all_info'
           } else {
               console.error('Unexpected response format:', response.data);
               setResults([]); // Clear results if format is unexpected
@@ -94,8 +95,7 @@ const SearchContainer = () => {
       } catch (error) {
           console.error('Error fetching data:', error);
       }
-  };
-  
+    };
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
@@ -119,8 +119,13 @@ const SearchContainer = () => {
             </Form>
             <ResultsList>
                 {Array.isArray(results) && results.length > 0 ? (
-                    results.map((info, index) => (
-                        <ResultItem key={index}>{info.headline}: {info.text}</ResultItem>
+                    results.map((info) => (
+                        <ResultItem key={info.id}>
+                            <strong>Key:</strong> {info.key} <br />
+                            <strong>Timestamp:</strong> {new Date(info.timestamp).toLocaleString()} <br />
+                            <strong>Topic ID:</strong> {info.topic_id} <br />
+                            <strong>User ID:</strong> {info.user_id}
+                        </ResultItem>
                     ))
                 ) : (
                     <ResultItem>No results found.</ResultItem>
