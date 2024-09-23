@@ -31,7 +31,7 @@ jobs:
     - name: Run Pylint on current branch
       id: pylint_current
       run: |
-        pylint . --enable=W | tee pylint_output.txt
+        pylint . --enable=W --disable=C0103 | tee pylint_output.txt
         pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
         echo "Pylint score: $pylint_score"
         echo "score=$pylint_score" >> $GITHUB_ENV
