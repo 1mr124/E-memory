@@ -2,12 +2,12 @@ import os
 from flask import current_app
 
 
-# Mr12 wanna make it OOP 😂
+
 
 @staticmethod
 def allowed_file(filename):
     """Check if a file has an allowed extension."""
-    allowed_extensions = {"png", "jpg", "jpeg", "gif", "bmp", "tiff", "webp"}
+    allowed_extensions = {"png", "jpg", "jpeg", "gif", "bmp", "tiff", "webp"} # Move it outside the function and give it as parameter for more reusability  
     return "." in filename and filename.rsplit(
         ".", 1)[1].lower() in allowed_extensions
 
@@ -20,17 +20,26 @@ def save_file(file_dir, file, filename):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     # Save the file
-    file.save(file_path)
+    try:
+        file.save(file_path)
+        return True  # Indicate success
+    except Exception as e:
+        print(f"Error saving file {filename}: {e}")
+        return False  # Indicate failure
 
 @staticmethod
 def remove_file(file_dir, filename):
     try:
         file_path = os.path.join(current_app.root_path, file_dir, filename)
         os.remove(file_path)
+        return True
+    except FileNotFoundError:
+        print(f"File {filename} not found in {file_dir}.")
+        return False
     except Exception as e:
-        print(
-            f"unable to remove file {filename} in directory {file_dir} due to {e}")
-
+        print(f"Unable to remove file {filename} in directory {file_dir} due to {e}")
+        return False
+    
 
 @staticmethod
 def createNewFolder(folderPath):
@@ -45,12 +54,10 @@ def createNewFolder(folderPath):
         False: Folder already exists or an error occurred during creation.
     """
     try:
-        if not os.path.exists(folderPath):
+        if not fileExists(folderPath):
             os.makedirs(folderPath, exist_ok=True)
             print(f"Folder created at {folderPath}")
             return True  # Folder created successfully
-        else:
-            return False  # Folder already exists
     except OSError as e:
         print(f"Error creating folder {folderPath}: {e}")
         return False  # Indicate failure
@@ -70,7 +77,7 @@ def createNewEmptyFile(filePath):
         False: File already exists or an error occurred during creation.
     """
     try:
-        if not os.path.exists(filePath):
+        if not fileExists(filePath):
             with open(filePath, 'w') as f:
                 pass  # Create an empty file
             return True
@@ -103,11 +110,14 @@ def writeToFile(filePath, content):
         os.makedirs(dirName, exist_ok=True)
     
     # Create the file if it doesn't exist
-    if not os.path.exists(filePath):
-        createNewEmptyFile(filePath)
-    
-    # Write (append) content to the file
-    print("writing to ",filePath)
+    if not fileExists(filePath):
+        creationResult = createNewEmptyFile(filePath)
+        if not creationResult:
+            # Handle the case where the file couldn't be created
+            print(f"Error: Unable to create the file at {filePath}.")
+            return False  # Stop further execution if file creation fails
+
+    # Append content to the file
     try:
         with open(filePath, 'a') as f:
             f.write(content)
@@ -115,3 +125,20 @@ def writeToFile(filePath, content):
     except OSError as e:
         print(f"Error writing to file {filePath}: {e}")
         return False  # Indicate failure
+    
+
+
+@staticmethod
+def fileExists(filePath):
+    """
+    Check if a file exists at the specified path.
+    
+    Argument:
+        filePath: Path to the file.
+
+    Returns:
+        True: If the file exists.
+        False: If the file does not exist.
+    """
+    return os.path.exists(filePath)
+

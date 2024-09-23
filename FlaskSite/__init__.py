@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from FlaskSite.utils.file_utils import writeToFile, createNewFolder  # Import utilities
+from FlaskSite.utils.file_utils import writeToFile, createNewFolder, fileExists  # Import utilities
 from flask_cors import CORS
 
 db = SQLAlchemy()
@@ -18,7 +18,7 @@ def createApp():
 
     configPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.py')
     # Load configurations
-    if not os.path.exists(configPath):
+    if not fileExists(configPath):
         print("config is not found")
         content = (
         "import os\n"
@@ -50,10 +50,10 @@ def createApp():
         
         # Create uploads folder if it doesn't exist
         uploadsFolder = app.config["IMG_FOLDER"]
-        if not os.path.exists(uploadsFolder):
+        if not fileExists(uploadsFolder):
             createNewFolder(uploadsFolder)
 
-        if not os.path.exists(
+        if not fileExists(
             app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
         ):
             os.makedirs(
