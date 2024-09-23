@@ -1,7 +1,8 @@
 import os
-
 from flask import current_app
 
+
+# Mr12 wanna make it OOP 😂
 
 @staticmethod
 def allowed_file(filename):
@@ -21,7 +22,7 @@ def save_file(file_dir, file, filename):
     # Save the file
     file.save(file_path)
 
-
+@staticmethod
 def remove_file(file_dir, filename):
     try:
         file_path = os.path.join(current_app.root_path, file_dir, filename)
@@ -29,3 +30,27 @@ def remove_file(file_dir, filename):
     except Exception as e:
         print(
             f"unable to remove file {filename} in directory {file_dir} due to {e}")
+
+@staticmethod
+def createDefaultConfig():
+    """
+        This will generate the config.py file if not found
+    """
+    with open("FlaskSite/config.py",'w') as f:
+        f.write("import os\n")
+        f.write("# Default configuration settings\n")
+        f.write("DEBUG = False\n")
+        f.write("SECRET_KEY = 'Make It Hard'\n")
+        f.write("BASE_DIR = os.path.abspath(os.path.dirname(__file__))\n")
+        f.write("SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'site.db')\n")
+        f.write("IMG_FOLDER = os.path.join(BASE_DIR, 'instance', 'uploads')\n")
+
+@staticmethod
+def ensureUploadsFolderExists(uploadsFolder):
+    """
+    Check if the uploads folder exists, and if not, create it.
+    """
+    
+    if not os.path.exists(uploadsFolder):
+        os.makedirs(uploadsFolder, exist_ok=True)
+        print(f"Uploads folder created at {uploadsFolder}")

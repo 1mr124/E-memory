@@ -3,26 +3,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from FlaskSite.utils.file_utils import createDefaultConfig, ensureUploadsFolderExists  # Import utilities
+
 
 # from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
-
-
-def createDefaultConfig():
-    """
-        This will generate the config.py file if not found
-    """
-    with open("FlaskSite/config.py",'w') as f:
-        f.write("import os\n")
-        f.write("# Default configuration settings\n")
-        f.write("DEBUG = False\n")
-        f.write("SECRET_KEY = 'Make It Hard'\n")
-        f.write("BASE_DIR = os.path.abspath(os.path.dirname(__file__))\n")
-        f.write("SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'site.db')\n")
-        f.write("IMG_FOLDER = os.path.join(BASE_DIR, 'instance', 'uploads')\n")
-
 
 
 def createApp():
@@ -32,7 +19,7 @@ def createApp():
     # CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Load configurations
-    if not os.path.exists('config.py'):
+    if not os.path.exists('FlaskSite/config.py'):
         createDefaultConfig()
         print(f"config.py created with default settings.")
 
@@ -53,8 +40,8 @@ def createApp():
         
         # Create uploads folder if it doesn't exist
         uploadsFolder = app.config["IMG_FOLDER"]
-        os.makedirs(uploadsFolder, exist_ok=True)
-        
+        ensureUploadsFolderExists(uploadsFolder)
+
         if not os.path.exists(
             app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
         ):
