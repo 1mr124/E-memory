@@ -72,7 +72,7 @@ const TextArea = styled.textarea`
     outline: none;
     padding: 10px;
     resize: none;
-    text-align: center;
+    text-align: left;
     height: 300px;
     border-radius: 10px;
 
