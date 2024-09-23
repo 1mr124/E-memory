@@ -8,12 +8,13 @@ const Navigation = ({ activeInput, setActiveInput, navItems }) => {
                 <NavItem
                     key={item.value}
                     onClick={() => setActiveInput(item.value)}
-                    active={activeInput === item.value}
+                    $active={activeInput === item.value} // Use $active here
                 >
                     {item.label}
                 </NavItem>
             ))}
         </Nav>
+
     );
 };
 
@@ -32,7 +33,8 @@ const Nav = styled.nav`
 const NavItem = styled.div`
     cursor: pointer;
     padding: 10px 20px;
-    color: ${({ active }) => (active ? '#fff' : 'black')};
+    color: ${({ $active }) => ($active ? '#fff' : 'black')};
 `;
+
 
 export default Navigation;
