@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from FlaskSite.utils.file_utils import createDefaultConfig, ensureUploadsFolderExists  # Import utilities
+from FlaskSite.utils.file_utils import writeToFile, createNewFolder  # Import utilities
 
 
 # from flask_cors import CORS
@@ -18,12 +18,24 @@ def createApp():
     # Enable CORS (Adjust as needed)
     # CORS(app, resources={r"/*": {"origins": "*"}})
 
+    configPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.py')
     # Load configurations
-    if not os.path.exists('FlaskSite/config.py'):
-        createDefaultConfig()
+    if not os.path.exists(configPath):
+        print("config is not found")
+        content = (
+        "import os\n"
+        "# Default configuration settings\n"
+        "DEBUG = False\n"
+        "SECRET_KEY = 'Make It Hard'\n"
+        "BASE_DIR = os.path.abspath(os.path.dirname(__file__))\n"
+        "SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'site.db')\n"
+        "IMG_FOLDER = os.path.join(BASE_DIR, 'instance', 'uploads')\n"
+            )
+        
+        writeToFile(configPath, content)
         print(f"config.py created with default settings.")
 
-    app.config.from_pyfile("config.py")
+    app.config.from_pyfile(configPath)
 
     # Initialize extensions
     db.init_app(app)
@@ -40,7 +52,8 @@ def createApp():
         
         # Create uploads folder if it doesn't exist
         uploadsFolder = app.config["IMG_FOLDER"]
-        ensureUploadsFolderExists(uploadsFolder)
+        if not os.path.exists(uploadsFolder):
+            createNewFolder(uploadsFolder)
 
         if not os.path.exists(
             app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", "")
@@ -54,7 +67,7 @@ def createApp():
             )
             db.create_all()
 
-    jwt = JWTManager(app)
-    jwt.init_app(app)
+    jwt = JWTManager() # Initialize the JWT manager object, istated of initializing JWTManager twice
+    jwt.init_app(app) # Then bind it to the app
 
     return app
