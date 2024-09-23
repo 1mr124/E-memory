@@ -4,7 +4,7 @@ import Navigation from './Navigation'; // Import Navigation
 import Text from './Text';
 import Link from './Link';
 import Pic from './Pic';
-import InfoSearchKey from './InfoSearchKey';
+import SearchContainer from './SearchContainer';
 
 const InfoContainer = () => {
     const [activeInput, setActiveInput] = useState('text');
@@ -36,7 +36,6 @@ const InfoContainer = () => {
          <Container>
             <Navigation activeInput={activeInput} setActiveInput={setActiveInput} navItems={navItems} />
             <Form>{renderInput()}</Form>
-             <InfoSearchKey />
              <SubmitButton type="submit">Add Info</SubmitButton>
          </Container>
      );
