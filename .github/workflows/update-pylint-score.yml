@@ -47,13 +47,14 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git checkout main
+        old_score=$(sed -n 's/pylint score: \([0-9\.]*\)/\1/p' README.md)
         sed -i "s/pylint score: [0-9\.]*/pylint score: $score/g" README.md
         git add README.md
         echo "Score to commit: $score"
         echo "Contents of README after update:"
         cat README.md
         if ! git diff-index --quiet HEAD --; then
-          git commit -m "Update pylint score in README to $score"
+          git commit -m "Update pylint score in README $old_score to $score"
           git push origin main
         else
           echo "No changes to commit."
