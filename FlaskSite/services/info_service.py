@@ -40,7 +40,7 @@ def prepare_texts(texts):
     for text_data in texts:
         item = {
             "text": text_data.get("text"),
-            "header": text_data.get("header"),
+            "header": text_data.get("headline"),
             "comment": text_data.get("comment"),
         }
         items.append(item)
@@ -51,8 +51,8 @@ def prepare_links(links):
     items = []
     for link_data in links:
         item = {
-            "path": link_data.get("url"),
-            "header": link_data.get("header"),
+            "path": link_data.get("link"),
+            "header": link_data.get("headline"),
             "comment": link_data.get("comment"),
         }
         items.append(item)
@@ -69,8 +69,8 @@ def prepare_pics(files):
                     current_app.config["IMG_FOLDER"], filename, file)
                 item = {
                     "path": filename,
-                    "header": request.form.get("Pic-Head"),
-                    "comment": request.form.get("Pic-Comment"),
+                    "header": request.form.get("headline"),
+                    "comment": request.form.get("comment"),
                 }
                 items.append(item)
 
