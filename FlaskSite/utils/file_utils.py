@@ -4,7 +4,6 @@ from flask import current_app
 
 
 
-@staticmethod
 def allowed_file(filename):
     """Check if a file has an allowed extension."""
     allowed_extensions = {"png", "jpg", "jpeg", "gif", "bmp", "tiff", "webp"} # Move it outside the function and give it as parameter for more reusability  
@@ -12,7 +11,6 @@ def allowed_file(filename):
         ".", 1)[1].lower() in allowed_extensions
 
 
-@staticmethod
 def save_file(file_dir, file, filename):
     file_path = os.path.join(current_app.root_path, file_dir, filename)
 
@@ -27,7 +25,6 @@ def save_file(file_dir, file, filename):
         print(f"Error saving file {filename}: {e}")
         return False  # Indicate failure
 
-@staticmethod
 def remove_file(file_dir, filename):
     try:
         file_path = os.path.join(current_app.root_path, file_dir, filename)
@@ -41,7 +38,6 @@ def remove_file(file_dir, filename):
         return False
     
 
-@staticmethod
 def createNewFolder(folderPath):
     """
     Attempt to create a new folder at the specified path.
@@ -64,7 +60,6 @@ def createNewFolder(folderPath):
 
 
 
-@staticmethod
 def createNewEmptyFile(filePath):
     """
     Create a new empty file.
@@ -89,7 +84,6 @@ def createNewEmptyFile(filePath):
     
 
 
-@staticmethod
 def writeToFile(filePath, content):
     """
     Ensure the file exists, then write (append) content to it.
@@ -128,7 +122,7 @@ def writeToFile(filePath, content):
     
 
 
-@staticmethod
+
 def fileExists(filePath):
     """
     Check if a file exists at the specified path.
