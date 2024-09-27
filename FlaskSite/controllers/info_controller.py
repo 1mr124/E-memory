@@ -3,7 +3,7 @@ from FlaskSite.services import info_service
 
 def create_info(user_id, search_key, topic_id, texts, links, files):
     info_id = info_service.get_info_id(
-        search_key, topic_id, user_id, create_if_missing=True
+        user_id, search_key, topic_id, create_if_missing=True
     )
     if info_id is None:
         return False
