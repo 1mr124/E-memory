@@ -1,18 +1,26 @@
-Get:
-curl -X GET "http://127.0.0.1:5001/api/v1/info?key=TestKey"
-
-Post:
-curl -X POST http://127.0.0.1:5001/api/v1/info \
--H "Content-Type: multipart/form-data" \
--F "key=TestKey" \
--F "topic_id=1" \
--F "user_id=1" \
--F "texts=[{\"text\": \"Example text\", \"header\": \"Text Header\", \"comment\": \"Text Comment\"},{\"text\": \"Example text\", \"header\": \"Text Header\", \"comment\": \"Text Comment\"}]" \
--F "links=[{\"url\": \"http://example.com\", \"header\": \"Link Header\", \"comment\": \"Link Comment\"}]" \
--F "Pic-File=@/home/mr124/Pictures/mr12.jpeg"
+curl --location 'http://127.0.0.1:5001/api/v1/login' \
+--form 'userName="Test"' \
+--form 'password="Test"'
 
 
 
-curl -X POST http://127.0.0.1:5001/api/v1/create \
--H "Content-Type: application/json" \
--d '{"name": "New Topic Name"}'
+curl --location 'http://127.0.0.1:5001/api/v1/register' \
+--header 'Cookie: session=eyJjc3JmX3Rva2VuIjoiZjc5NmRmZDU3MjYwODVjN2VhODA2NmI1OTM1OTdlMmUyYjRmZDNjOCJ9.ZvF_tg.x0BgZZzWGMu_6s-MFq9QXQ7pAHI; session=eyJjc3JmX3Rva2VuIjoiZjc5NmRmZDU3MjYwODVjN2VhODA2NmI1OTM1OTdlMmUyYjRmZDNjOCJ9.ZvF_tg.x0BgZZzWGMu_6s-MFq9QXQ7pAHI' \
+--form 'userName="Test"' \
+--form 'password="Test"' \
+--form 'repeatPassword="Test"' \
+--form 'email="Test@gmail.com"' \
+--form 'csrf_token=" 213123123123123"'
+
+
+
+curl --location 'http://127.0.0.1:5001/api/v1/info' \
+--form 'key="TestKey"' \
+--form 'topic_id="1"' \
+--form 'user_id="1"' \
+--form 'texts="[{\"text\": \"Example text\", \"header\": \"Text Header\", \"comment\": \"Text Comment\"},{\"text\": \"Example text\", \"header\": \"Text Header\", \"comment\": \"Text Comment\"}]"' \
+--form 'links="[{\"url\": \"http://example.com\", \"header\": \"Link Header\", \"comment\": \"Link Comment\"}]"' \
+--form 'Pic-File=@"/home/mr124/Pictures/mr12.jpeg"
+
+
+
