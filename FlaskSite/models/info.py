@@ -37,6 +37,16 @@ class Info(db.Model):
     voices = db.relationship(
         "Voice", backref="info", lazy=True, cascade="all, delete-orphan"
     )
+    def to_dict(self):
+        """Convert the Info instance to a dictionary."""
+        return {
+            "id": self.id,
+            "timestamp": self.timestamp.isoformat(),  # Use isoformat for datetime
+            "topic_id": self.topic_id,
+            "user_id": self.user_id,
+            "key": self.key,
+            # Add any other fields you want to include
+        }
 
     def __repr__(self):
         """Provide a string representation of the Info instance."""
