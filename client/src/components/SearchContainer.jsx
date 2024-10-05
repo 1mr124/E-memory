@@ -67,34 +67,55 @@ const ResultItem = styled.li`
     border-radius: 5px;
 `;
 
+const Button = styled.button`
+    background-color: #34495e;
+    color: #e0f7fa;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    &:hover {
+        background-color: #2c3e50;
+    }
+`;
+
+const InfoDetails = styled.div`
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #e0f7fa;
+    border-radius: 4px;
+`;
+
 const SearchContainer = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState([]);
+    const [expandedInfo, setExpandedInfo] = useState(null); // Track which info is expanded
 
     const handleSearch = async (e) => {
-      if (e) {
-          e.preventDefault(); // Only prevent default if event is defined
-      }
-      if (!searchTerm) {
-          setResults([]); // Clear results if search term is empty
-          return;
-      }
+        if (e) {
+            e.preventDefault(); // Only prevent default if event is defined
+        }
+        if (!searchTerm) {
+            setResults([]); // Clear results if search term is empty
+            return;
+        }
   
-      try {
-          console.log("Fetching results...");
-          const response = await api.get(`/search?searchKey=${searchTerm}`);
-            
-          // Check if response contains the 'all_info' property and is an array
-          if (response.data && Array.isArray(response.data.all_info)) {
-            console.log(response.data.all_info);
-            setResults(response.data.all_info); // Set results from 'all_info'
-          } else {
-              console.error('Unexpected response format:', response.data);
-              setResults([]); // Clear results if format is unexpected
-          }
-      } catch (error) {
-          console.error('Error fetching data:', error);
-      }
+        try {
+            const token = sessionStorage.getItem('authToken');
+
+            const response = await api.get(`/search?searchKey=${searchTerm}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`  // Include the token in the Authorization header
+                }
+            });
+
+            setResults(response.data); // Set results directly from the response
+            setExpandedInfo(null); // Reset expanded info when new results are fetched
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
 
     useEffect(() => {
@@ -104,6 +125,11 @@ const SearchContainer = () => {
 
         return () => clearTimeout(delayDebounceFn); // Cleanup on unmount or when searchTerm changes
     }, [searchTerm]); // Fetch results whenever the search term changes
+
+    const handleInfoButtonClick = (infoId) => {
+        // Toggle the details for the clicked info
+        setExpandedInfo(prev => (prev === infoId ? null : infoId)); 
+    };
 
     return (
         <Container>
@@ -121,10 +147,41 @@ const SearchContainer = () => {
                 {Array.isArray(results) && results.length > 0 ? (
                     results.map((info) => (
                         <ResultItem key={info.id}>
-                            <strong>Key:</strong> {info.key} <br />
-                            <strong>Timestamp:</strong> {new Date(info.timestamp).toLocaleString()} <br />
-                            <strong>Topic ID:</strong> {info.topic_id} <br />
-                            <strong>User ID:</strong> {info.user_id}
+                            <Button onClick={() => handleInfoButtonClick(info.id)}>
+                                {info.key} {/* You can change this to display another field if you prefer */}
+                            </Button>
+                            {/* Show details of the selected info */}
+                            {expandedInfo === info.id && (
+                                <InfoDetails>
+                                    <h3>Details for: {info.key}</h3>
+                                    <h4>Texts:</h4>
+                                    {info.texts.map((text, index) => (
+                                        <div key={index}>
+                                            <strong>{text.header}</strong>: {text.text} <br />
+                                            <em>{text.comment}</em>
+                                        </div>
+                                    ))}
+                                    <h4>Links:</h4>
+                                    {info.links.length > 0 ? (
+                                        info.links.map((link, index) => (
+                                            <div key={index}>
+                                                <strong>{link.header}</strong>: <a href={link.path} target="_blank" rel="noopener noreferrer">{link.path}</a>
+                                                <em>{link.comment}</em>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div>No links available.</div>
+                                    )}
+                                    <h4>Pictures:</h4>
+                                    {info.pics.length > 0 ? (
+                                        info.pics.map((pic, index) => (
+                                            <img key={index} src={pic.path} alt={pic.comment} style={{ width: '100px', height: '100px', margin: '5px' }} />
+                                        ))
+                                    ) : (
+                                        <div>No pictures available.</div>
+                                    )}
+                                </InfoDetails>
+                            )}
                         </ResultItem>
                     ))
                 ) : (
