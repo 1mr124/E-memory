@@ -101,5 +101,8 @@ def store_items(items, db_model_class, info_id):
         return False
 
 
-def get_info(search_key):
-    return Info.query.filter(Info.key.ilike(f"%{search_key}%")).all()
+def get_info(search_key, user_id):
+    return Info.query.filter(
+        Info.key.ilike(f"%{search_key}%"),
+        Info.user_id == user_id
+    ).all()
