@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
-from FlaskSite.models import db, Info, SearchKey
+from FlaskSite.controllers import info_controller
+from flask_jwt_extended import get_jwt_identity
 
 bp = Blueprint('search', __name__)
 
@@ -7,33 +8,22 @@ bp = Blueprint('search', __name__)
 @bp.route('/search', methods=['GET'])
 def search():
     """Handle search operations."""
-    search_key = request.args.get("searchKey")
+    # Extract query parameters
+    search_key = request.args.get('search_key')
+    user_id = get_jwt_identity()
 
-    if search_key:
-        all_info = Info.query.filter_by(key=search_key).all()
-        search_keys = [key.key for key in SearchKey.query.all()]
-        return jsonify({
-            "all_info": [info.to_dict() for info in all_info],
-            "search_keys": search_keys
-        }), 200
-    else:
-        abort(400, description="Search key is required")
+    print(search_key,user_id)
+    input("stoped")
 
+    if not search_key or not user_id:
+        return jsonify({'error': 'search_key and user_id are required'}), 400
 
-@bp.route('/edit', methods=['POST'])
-def edit_info():
-    """Handle edit operations."""
-    data = request.json
-    edit_id = data.get("infoId")
-    edit_text = data.get("textTextData")
-
-    if edit_id and edit_text:
-        info = Info.query.get(edit_id)
-        if info:
-            info.texts[0].text = edit_text
-            db.session.commit()
-            return jsonify({"message": "Info updated successfully"}), 200
-        else:
-            return jsonify({"message": "Info not found"}), 404
-    else:
-        abort(400, description="Info ID and text are required")
+    # Call the controller to get the result
+    try:
+        result = info_controller.get_info(search_key, user_id)
+        if not result:
+            return jsonify({'message': 'No results found'}), 404
+        return jsonify(result), 200
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({'error': str(e)}), 500
