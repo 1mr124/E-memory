@@ -24,7 +24,7 @@ api.interceptors.response.use((response) => {
   if (error.response && error.response.status === 401) {
     sessionStorage.removeItem('token');
     // Redirect to login
-    window.location.href = '/login'; // Use window.location.href for redirection
+    window.location.href = '/account'; // Use window.location.href for redirection
   }
   return Promise.reject(error);
 });
