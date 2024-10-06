@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import api from '../api'; // Import the API
 
+import InfoDisplayControler from './InfoDisplayControler';
+
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -143,51 +145,9 @@ const SearchContainer = () => {
                     <SearchIcon onClick={() => handleSearch()} />
                 </InputContainer>
             </Form>
-            <ResultsList>
-                {Array.isArray(results) && results.length > 0 ? (
-                    results.map((info) => (
-                        <ResultItem key={info.id}>
-                            <Button onClick={() => handleInfoButtonClick(info.id)}>
-                                {info.key} {/* You can change this to display another field if you prefer */}
-                            </Button>
-                            {/* Show details of the selected info */}
-                            {expandedInfo === info.id && (
-                                <InfoDetails>
-                                    <h3>Details for: {info.key}</h3>
-                                    <h4>Texts:</h4>
-                                    {info.texts.map((text, index) => (
-                                        <div key={index}>
-                                            <strong>{text.header}</strong>: {text.text} <br />
-                                            <em>{text.comment}</em>
-                                        </div>
-                                    ))}
-                                    <h4>Links:</h4>
-                                    {info.links.length > 0 ? (
-                                        info.links.map((link, index) => (
-                                            <div key={index}>
-                                                <strong>{link.header}</strong>: <a href={link.path} target="_blank" rel="noopener noreferrer">{link.path}</a>
-                                                <em>{link.comment}</em>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div>No links available.</div>
-                                    )}
-                                    <h4>Pictures:</h4>
-                                    {info.pics.length > 0 ? (
-                                        info.pics.map((pic, index) => (
-                                            <img key={index} src={pic.path} alt={pic.comment} style={{ width: '100px', height: '100px', margin: '5px' }} />
-                                        ))
-                                    ) : (
-                                        <div>No pictures available.</div>
-                                    )}
-                                </InfoDetails>
-                            )}
-                        </ResultItem>
-                    ))
-                ) : (
-                    <ResultItem>No results found.</ResultItem>
-                )}
-            </ResultsList>
+
+            <InfoDisplayControler results={results} />
+            
         </Container>
     );
 };
