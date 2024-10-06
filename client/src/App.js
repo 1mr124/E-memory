@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {  Route, Routes } from 'react-router-dom';
 import BasicNavBar from './components/BasicNavBar';
 import InfoContainer from './components/InfoContainer';
 import SearchContainer from './components/SearchContainer'; // Assuming you have these components
@@ -10,7 +10,6 @@ import './App.css';
 
 const App = () => {
   return (
-    <Router>
       <div className="App">
         <BasicNavBar />
         {/* Routing area */}
@@ -23,7 +22,6 @@ const App = () => {
           <Route path="/" element={<InfoContainer />} />
         </Routes>
       </div>
-    </Router>
   );
 };
 
