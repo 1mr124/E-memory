@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import InfoButton from './InfoButton'
 
 const Container = styled.div`
     display: flex;
@@ -14,19 +15,6 @@ const Container = styled.div`
 
 `;
 
-const InfoButton = styled.button`
-    background-color: #34495e;
-    color: #e0f7fa;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 3px;
-
-    &:hover {
-        background-color: #2e3d60;
-    }
-`;
 
 const InfoDisplayController = ({ results }) => {
     
@@ -52,9 +40,7 @@ const InfoDisplayController = ({ results }) => {
         {Array.isArray(results) && results.length > 0 ? (
             results.map((info) => (
                 
-                <InfoButton key={info.id} onClick={() => handleClick(info)}>
-                      {info.title || info.key} {/* Display title or key if title is not available */}
-                </InfoButton>
+                <InfoButton key={info.id} info={info} onClick={() => handleClick(info)}></InfoButton>
 
 
             ))
