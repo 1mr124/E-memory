@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Label, Input, SubmitButton } from './StyledComponents';
 import { sanitizeInput } from '../utils/inputSanitization'; // Import the utility function
-import api from '../api';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom'; // For redirection
 
 const SignInForm = () => {

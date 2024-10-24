@@ -4,7 +4,7 @@ import Navigation from './Navigation';
 import Text from './Text';
 import Link from './Link';
 import Pic from './Pic';
-import api from '../api';
+import api from '../api/api';
 import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Label, Input, SubmitButton } from './StyledComponents';
 import { sanitizeInput } from '../utils/inputSanitization';
-import api from '../api';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
-import api from '../api'; // Import the API
+import api from '../api/api'; // Import the API
 
 import InfoDisplayControler from './InfoDisplayControler';
 
