@@ -70,10 +70,10 @@ const InfoContainer = () => {
         }
         
 
-        const token = localStorage.getItem('jwtToken');
+        const token = sessionStorage.getItem('authToken');
 
         // Use axios request with .then() and .catch() instead of async/await
-    api.post('http://127.0.0.1:5001/api/v1/info', formData, {
+        api.post('http://127.0.0.1:5001/api/v1/info', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`,

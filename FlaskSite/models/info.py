@@ -38,6 +38,7 @@ class Info(db.Model):
         "Voice", backref="info", lazy=True, cascade="all, delete-orphan"
     )
 
+
     def __repr__(self):
         """Provide a string representation of the Info instance."""
         return f"<Info {self.key} (Topic ID: {self.topic_id})>"
