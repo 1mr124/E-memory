@@ -41,7 +41,8 @@ jobs:
     - name: Run Pylint on main branch
       id: pylint_master
       run: |
-        pylint_score=$(pylint . --enable=W --disable=C0103 | grep "Your code has been rated" | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+        pylint . --enable=W --disable=C0103 | tee pylint_output.txt
+        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
         echo "Pylint score on main branch: $pylint_score"
         echo "master_score=$pylint_score" >> $GITHUB_ENV
 
@@ -52,7 +53,7 @@ jobs:
         echo "Main branch Pylint score: ${{ env.master_score }}"
         if (( $(echo "${{ env.current_score }} < ${{ env.master_score }}" | bc -l) )); then
           echo "Pylint score decreased! Please check the code quality."
-          #exit 1
+          exit 1
         else
           echo "Pylint score is good or has improved."
         fi

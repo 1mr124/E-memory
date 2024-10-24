@@ -38,6 +38,7 @@ const SignInForm = () => {
         }
 
         try {
+            console.log(payload);
             
             const response = await api.post('/login', payload,
                 {
@@ -47,6 +48,7 @@ const SignInForm = () => {
               });
 
             const { token, message } = response.data;
+            console.log(message);
             
 
             // Check if the token exists and login is successful
@@ -54,6 +56,7 @@ const SignInForm = () => {
                 sessionStorage.setItem('authToken', token); // Store token in session storage
                 setCredentials({ identifier: '', password: '' }); // Clear input fields
                 setError(null); // Clear any error messages
+                console.log('Login successful:', token);
 
                 // Redirect to /info after successful login
                 navigate('/info');
