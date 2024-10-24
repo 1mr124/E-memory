@@ -1,19 +1,6 @@
 import React from 'react';
+import { Container, Headline, Comment } from './sharedStyles';
 import styled from 'styled-components';
-
-const LinkContainer = styled.div`
-    margin: 10px 0;
-    text-align: left;
-    width: 100%;
-
-    @media (max-width: 768px) {
-        text-align: center;
-    }
-`;
-
-const LinkHeader = styled.h4`
-    color: #fff;
-`;
 
 const StyledLink = styled.a`
     color: #1abc9c;
@@ -24,29 +11,23 @@ const StyledLink = styled.a`
     }
 `;
 
-const LinkComment = styled.em`
-    color: #888;
-    display: block;
-    margin-top: 5px;
-`;
-
 const LinkDisplay = ({ infoLinks }) => {
     return (
-        <LinkContainer>
+        <Container>
             {Array.isArray(infoLinks) && infoLinks.length > 0 ? (
                 infoLinks.map((linkObj, index) => (
                     <div key={index}>
-                        {linkObj.header && <LinkHeader>{linkObj.header}</LinkHeader>}
+                        {linkObj.header && <Headline>{linkObj.header}</Headline>}
                         <StyledLink href={linkObj.path} target="_blank" rel="noopener noreferrer">
                             {linkObj.path}
                         </StyledLink>
-                        {linkObj.comment && <LinkComment>({linkObj.comment})</LinkComment>}
+                        {linkObj.comment && <Comment>({linkObj.comment})</Comment>}
                     </div>
                 ))
             ) : (
                 <p>No Links found.</p>
             )}
-        </LinkContainer>
+        </Container>
     );
 };
 
