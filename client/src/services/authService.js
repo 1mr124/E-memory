@@ -1,6 +1,6 @@
 // src/services/authService.js
 const authService = {
-    getToken: () => sessionStorage.getItem('token'),
+    getToken: () => sessionStorage.getItem('authToken'),
     setToken: (token) => sessionStorage.setItem('token', token),
     removeToken: () => sessionStorage.removeItem('token'),
     isAuthenticated: () => !!sessionStorage.getItem('token'),

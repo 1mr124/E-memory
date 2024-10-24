@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Label, Input, SubmitButton } from './StyledComponents';
 import { sanitizeInput } from '../utils/inputSanitization'; // Import the utility function
-import api from '../api/api';
+import publicApi from '../api/publicApi';
 import { useNavigate } from 'react-router-dom'; // For redirection
 
 const SignInForm = () => {
@@ -40,7 +40,7 @@ const SignInForm = () => {
         try {
             console.log(payload);
             
-            const response = await api.post('/login', payload,
+            const response = await publicApi.post('/login', payload,
                 {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Form data type

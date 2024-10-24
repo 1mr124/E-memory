@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Label, Input, SubmitButton } from './StyledComponents';
 import { sanitizeInput } from '../utils/inputSanitization';
-import api from '../api/api';
+import publicApi from '../api/publicApi';
 import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
@@ -32,7 +32,7 @@ const SignUpForm = () => {
 
         try {
             // Send the sanitized data to the backend
-            const response = await api.post('/register', {
+            const response = await publicApi.post('/register', {
                 userName: sanitizedUsername,
                 email: sanitizedEmail,
                 password: sanitizedPassword,
