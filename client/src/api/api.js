@@ -1,5 +1,5 @@
 import axios from 'axios';
-import authService from './services/authService'; // Import the auth service
+import authService from '../services/authService'; // Import the auth service
 
 // Create Axios instance
 const api = axios.create({
@@ -8,10 +8,17 @@ const api = axios.create({
 
 // Add request interceptor to include the token in the Authorization header
 api.interceptors.request.use((config) => {
-  const token = authService.getToken(); // Use auth service
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const token = authService.getToken(); // Get token from authService
+
+  // Check if the token exists
+  if (!token) {
+    // If no token is present, gracefully handle the missing token
+    window.location.href = '/account'; // Redirect to login page
+    return Promise.reject(new Error('No token available, user needs to log in')); // Cancel the request
   }
+
+  // If token exists, set Authorization header
+  config.headers.Authorization = `Bearer ${token}`;
   return config;
 }, (error) => {
   return Promise.reject(error);
