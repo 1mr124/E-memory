@@ -1,5 +1,5 @@
-// src/api.js
 import axios from 'axios';
+import authService from './services/authService'; // Import the auth service
 
 // Create Axios instance
 const api = axios.create({
@@ -8,7 +8,7 @@ const api = axios.create({
 
 // Add request interceptor to include the token in the Authorization header
 api.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('token');
+  const token = authService.getToken(); // Use auth service
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,9 +22,9 @@ api.interceptors.response.use((response) => {
   return response;
 }, (error) => {
   if (error.response && error.response.status === 401) {
-    sessionStorage.removeItem('token');
+    authService.removeToken(); // Remove token via auth service
     // Redirect to login
-    window.location.href = '/account'; // Use window.location.href for redirection
+    window.location.href = '/account';
   }
   return Promise.reject(error);
 });
