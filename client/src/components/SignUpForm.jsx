@@ -3,11 +3,14 @@ import { Form, Label, Input, SubmitButton } from './StyledComponents';
 import { sanitizeInput } from '../utils/inputSanitization';
 import publicApi from '../api/publicApi';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const SignUpForm = () => {
     const [userInfo, setUserInfo] = useState({ name: '', email: '', password: '', repeatPassword: '' });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { login } = useAuth(); // Get the login function from context
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,8 +47,10 @@ const SignUpForm = () => {
           });
           
             if (response.data.message === "User registered successfully") {
+                //login(token);
                 // Redirect on success
-                navigate('/info');
+                // i will make it a temp redirect to /login 
+                navigate('/account');
             } else {
                 // Handle failed registration (backend returns success 200 but failure in message)
                 setError(response.data.message || 'Registration failed. Please try again.');

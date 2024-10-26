@@ -4,10 +4,16 @@ import { sanitizeInput } from '../utils/inputSanitization'; // Import the utilit
 import publicApi from '../api/publicApi';
 import { useNavigate } from 'react-router-dom'; // For redirection
 
+import { useAuth } from '../context/AuthContext';
+
+
 const SignInForm = () => {
     const [credentials, setCredentials] = useState({ identifier: '', password: '' });
     const [error, setError] = useState(null);
     const navigate = useNavigate(); // Initialize navigate hook for redirection
+
+    const { login } = useAuth(); // Get the login function from context
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -53,7 +59,7 @@ const SignInForm = () => {
 
             // Check if the token exists and login is successful
             if (token) {
-                sessionStorage.setItem('authToken', token); // Store token in session storage
+                login(token);
                 setCredentials({ identifier: '', password: '' }); // Clear input fields
                 setError(null); // Clear any error messages
                 console.log('Login successful:', token);

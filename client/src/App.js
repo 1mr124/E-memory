@@ -2,14 +2,19 @@ import React from 'react';
 import {  Route, Routes } from 'react-router-dom';
 import BasicNavBar from './components/BasicNavBar';
 import InfoContainer from './components/InfoContainer';
-import SearchContainer from './components/SearchContainer'; // Assuming you have these components
-import TopicsContainer from './components/TopicsContainer'; // Assuming you have these components
+import SearchContainer from './components/SearchContainer'; 
+import TopicsContainer from './components/TopicsContainer'; 
 import AccountContainer from './components/AccountContainer';
+
+import { AuthProvider } from './context/AuthContext';
+
 
 import './App.css';
 
 const App = () => {
   return (
+    <AuthProvider>
+
       <div className="App">
         <BasicNavBar />
         {/* Routing area */}
@@ -22,6 +27,9 @@ const App = () => {
           <Route path="/" element={<InfoContainer />} />
         </Routes>
       </div>
+
+      </AuthProvider>
+
   );
 };
 
