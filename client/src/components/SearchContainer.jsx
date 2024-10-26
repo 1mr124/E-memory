@@ -107,10 +107,7 @@ const SearchContainer = () => {
         try {
             const token = sessionStorage.getItem('authToken');
 
-            const response = await authApi.get(`/search?searchKey=${searchTerm}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`  // Include the token in the Authorization header
-                }
+            const response = await authApi.get(`/api/v1/search?searchKey=${searchTerm}`, {
             });
 
             setResults(response.data); // Set results directly from the response

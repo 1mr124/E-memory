@@ -73,10 +73,9 @@ const InfoContainer = () => {
         const token = sessionStorage.getItem('authToken');
 
         // Use axios request with .then() and .catch() instead of async/await
-        authApi.post('http://127.0.0.1:5001/api/v1/info', formData, {
-        headers: {
+        authApi.post('/api/v1/info', formData, {
+            headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`,
         },
     })
     .then((response) => {

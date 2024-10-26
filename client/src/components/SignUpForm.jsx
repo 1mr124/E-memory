@@ -32,7 +32,7 @@ const SignUpForm = () => {
 
         try {
             // Send the sanitized data to the backend
-            const response = await publicApi.post('/register', {
+            const response = await publicApi.post('/api/v1/register', {
                 userName: sanitizedUsername,
                 email: sanitizedEmail,
                 password: sanitizedPassword,

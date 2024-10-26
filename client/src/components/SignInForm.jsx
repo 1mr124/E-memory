@@ -40,7 +40,7 @@ const SignInForm = () => {
         try {
             console.log(payload);
             
-            const response = await publicApi.post('/login', payload,
+            const response = await publicApi.post('/api/v1/login', payload,
                 {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Form data type
