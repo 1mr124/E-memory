@@ -1,4 +1,5 @@
 from FlaskSite.services import info_service
+from FlaskSite.utils.list_utils import get_unique_list_of_dictionaries
 
 
 def create_info(user_id, search_key, topic_id, texts, links, files):
@@ -7,6 +8,9 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
     )
     if info_id is None:
         return False
+    texts = cleanup_list(texts)
+    links = cleanup_list(links)
+    files = cleanup_list(files)
     info_service.add_info_data(info_id, texts, links, files)
     return True
 
@@ -38,3 +42,20 @@ def update_info():
 
 def delete_info():
     pass
+
+def cleanup_list(input_list):
+    input_list = get_unique_list_of_dictionaries(input_list)
+    must_exist_values = ['headline', 'text', 'path', 'header', 'link']
+    new_list = []
+
+    for item in input_list:
+        take_item = True
+        for key in item:
+            if key not in must_exist_values:
+                continue
+            if item[key] is None or item[key] == "":
+                take_item = False
+                break
+        if take_item:
+            new_list.append(item)
+    return new_list
