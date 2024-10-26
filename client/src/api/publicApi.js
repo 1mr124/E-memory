@@ -1,9 +1,12 @@
 import axios from 'axios';
 import authService from '../services/authService'; // Import the auth service
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
+
 // Create Axios instance
 const publicApi = axios.create({
-  baseURL: 'http://127.0.0.1:5001/api/v1',
+  baseURL: apiUrl,
 });
 
 // Add request interceptor to include the token in the Authorization header
