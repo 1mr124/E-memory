@@ -4,7 +4,7 @@ import Navigation from './Navigation';
 import Text from './Text';
 import Link from './Link';
 import Pic from './Pic';
-import api from '../api';
+import authApi from '../api/authApi';
 import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
@@ -73,10 +73,9 @@ const InfoContainer = () => {
         const token = sessionStorage.getItem('authToken');
 
         // Use axios request with .then() and .catch() instead of async/await
-        api.post('http://127.0.0.1:5001/api/v1/info', formData, {
-        headers: {
+        authApi.post('/api/v1/info', formData, {
+            headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`,
         },
     })
     .then((response) => {

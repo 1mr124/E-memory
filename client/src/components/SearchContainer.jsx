@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
-import api from '../api'; // Import the API
+import authApi from '../api/authApi'; // Import the API
 
 import InfoDisplayControler from './InfoDisplayControler';
 
@@ -107,10 +107,7 @@ const SearchContainer = () => {
         try {
             const token = sessionStorage.getItem('authToken');
 
-            const response = await api.get(`/search?searchKey=${searchTerm}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`  // Include the token in the Authorization header
-                }
+            const response = await authApi.get(`/api/v1/search?searchKey=${searchTerm}`, {
             });
 
             setResults(response.data); // Set results directly from the response
