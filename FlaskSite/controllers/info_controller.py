@@ -11,6 +11,8 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
     texts = cleanup_list(texts)
     links = cleanup_list(links)
     files = cleanup_list(files)
+    if len(texts) == 0 and len(links) == 0 and len(files) == 0:
+        return False
     info_service.add_info_data(info_id, texts, links, files)
     return True
 
