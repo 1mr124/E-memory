@@ -1,6 +1,5 @@
-from FlaskSite.utils import jwt_helper
 from FlaskSite.models import User, db
-from FlaskSite.utils.jwt_helper import generate_token
+from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token
 
 
 def register(user: User):
@@ -18,5 +17,7 @@ def register(user: User):
 def login(username, password):
     user = User.query.filter_by(username=username).first()
     if user and user.check_password(password):
-        return True, generate_token(user.id)
-    return False, None
+        access_token = generate_token(user.id)
+        refresh_token = generate_refresh_token(user.id)
+        return True, access_token, refresh_token
+    return False, None, None

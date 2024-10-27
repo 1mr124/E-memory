@@ -16,7 +16,7 @@ def createApp():
     app = Flask(__name__)
 
     # Enable CORS (Adjust as needed)
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) # restrict it to specific origins React deafult clinet 
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000", "supports_credentials": True}})
 
     # Load configurations based on the environment
     env = os.environ.get('FLASK_ENV', 'default')  # Default to 'default' if FLASK_ENV is not set Hint: FLASK_ENV=development && flask run

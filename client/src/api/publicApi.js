@@ -3,10 +3,10 @@ import authService from '../services/authService'; // Import the auth service
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
 // Create Axios instance
 const publicApi = axios.create({
   baseURL: apiUrl,
+  withCredentials: true, // Enable credentials to send cookies with requests
 });
 
 // Add request interceptor to include the token in the Authorization header
@@ -14,7 +14,9 @@ publicApi.interceptors.request.use((config) => {
   const token = authService.getToken(); // Get token from authService
   
   // If token exists, set Authorization header
-  config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 }, (error) => {
   return Promise.reject(error);

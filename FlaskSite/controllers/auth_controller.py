@@ -1,6 +1,6 @@
 from FlaskSite.services import auth_service
 from FlaskSite.models import User
-from flask import jsonify
+from flask import jsonify,current_app
 
 
 def register(username, password, email):
@@ -15,13 +15,18 @@ def register(username, password, email):
 
 def login(username, password):
     try:
-        (valid, token) = auth_service.login(username, password)
+        (valid, token, refresh_token) = auth_service.login(username, password)
         if not valid:
             return (
                 jsonify({"message": "Invalid username or password", "token": ""}),
                 200,
             )
+        # Create a response object
+        response = jsonify({"message": "Login successful", "access_token": token})
+        secure_cookie = current_app.config['SECURE_COOKIE']
 
-        return jsonify({"message": "Login successful", "token": token}), 200
+        # Set the refresh token as a secure cookie
+        response.set_cookie('refresh_token', refresh_token, httponly=True, secure=secure_cookie, samesite='Lax', path='/')
+        return response, 200
     except Exception as e:
         return jsonify({"message": f"An error occurred {e}"}), 500
