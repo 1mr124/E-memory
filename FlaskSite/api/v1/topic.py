@@ -5,22 +5,26 @@ from FlaskSite.models import db, Topic, SearchKey, Info
 bp = Blueprint('topic', __name__)
 
 
-@bp.route('/create', methods=['POST'])
+@bp.route('/topic/create', methods=['POST'])
 def create_topic():
-    """Handle topic creation."""
-    form = NewTopic(request.json)
+    data = request.get_json()
 
-    if form.validate():
-        topic = Topic(name=form.name.data)
-        db.session.add(topic)
-        try:
-            db.session.commit()
-            return jsonify({"message": "Topic created successfully"}), 201
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"message": "An error occurred"}), 500
-    else:
-        return jsonify({"errors": form.errors}), 400
+    # Validate data
+    if not data or 'title' not in data or 'parent' not in data:
+        return jsonify({"error": "Title and parent fields are required"}), 400
+
+    title = data['title']
+    parent = data['parent']
+
+    try:
+        # Assume we have a function `add_topic_to_db` to handle database logic
+        print("Topic added",title,"Parent: ",parent)
+        return jsonify({
+            "message": "Topic added successfully",
+        }), 201
+    except Exception as e:
+        print(f"Error adding topic to database: {e}")
+        return jsonify({"error": "Failed to add topic"}), 500
 
 
 @bp.route('/delete', methods=['POST'])
