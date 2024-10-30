@@ -7,6 +7,7 @@ import TopicsContainer from './components/TopicsContainer';
 import AccountContainer from './components/AccountContainer';
 
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 import './App.css';
@@ -19,12 +20,17 @@ const App = () => {
         <BasicNavBar />
         {/* Routing area */}
         <Routes>
-          <Route path="/info" element={<InfoContainer />} />
-          <Route path="/search" element={<SearchContainer />} />
-          <Route path="/topics" element={<TopicsContainer />} />
+
+          {/* Protected Route */}
+          <Route path="/info" element={<ProtectedRoute>     <InfoContainer />     </ProtectedRoute>} />
+          <Route path="/search" element={<ProtectedRoute>   <SearchContainer />   </ProtectedRoute>} />
+          <Route path="/topics" element={<ProtectedRoute>   <TopicsContainer />   </ProtectedRoute>} />
+          
+          
           <Route path="/account" element={<AccountContainer />} />
+
           {/* Default to InfoContainer if no path is specified */}
-          <Route path="/" element={<InfoContainer />} />
+          <Route path="/" element={<ProtectedRoute>     <InfoContainer />     </ProtectedRoute>} />
         </Routes>
       </div>
 
