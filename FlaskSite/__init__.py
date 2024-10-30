@@ -15,7 +15,7 @@ migrate = Migrate()
 def get_config():
     """Determine and retrieve the configuration based on the environment."""
     env = os.environ.get('FLASK_ENV', 'default')  # Default to 'default' if FLASK_ENV is not set Hint: FLASK_ENV=development && flask run
-    return config(env)
+    return config[env]
 
 
 def createApp():
