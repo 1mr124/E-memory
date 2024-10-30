@@ -5,9 +5,17 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from FlaskSite.utils.file_utils import writeToFile, createNewFolder, fileExists  # Import utilities
 from flask_cors import CORS
+from config import config
+
+
 
 db = SQLAlchemy()
 migrate = Migrate()
+
+def get_config():
+    """Determine and retrieve the configuration based on the environment."""
+    env = os.environ.get('FLASK_ENV', 'default')  # Default to 'default' if FLASK_ENV is not set Hint: FLASK_ENV=development && flask run
+    return config[env]
 
 
 def createApp():
@@ -16,24 +24,8 @@ def createApp():
     # Enable CORS (Adjust as needed)
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) # restrict it to specific origins React deafult clinet 
 
-    configPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.py')
-    # Load configurations
-    if not fileExists(configPath):
-        print("config is not found")
-        content = (
-        "import os\n"
-        "# Default configuration settings\n"
-        "DEBUG = False\n"
-        "SECRET_KEY = 'Make It Hard'\n"
-        "BASE_DIR = os.path.abspath(os.path.dirname(__file__))\n"
-        "SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'site.db')\n"
-        "IMG_FOLDER = os.path.join(BASE_DIR, 'instance', 'uploads')\n"
-            )
-        
-        writeToFile(configPath, content)
-        print(f"config.py created with default settings.")
-
-    app.config.from_pyfile(configPath)
+    # Load configurations based on the environment
+    app.config.from_object(get_config())
 
     # Initialize extensions
     db.init_app(app)
