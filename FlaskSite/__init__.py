@@ -8,8 +8,14 @@ from flask_cors import CORS
 from config import config
 
 
+
 db = SQLAlchemy()
 migrate = Migrate()
+
+def get_config():
+    """Determine and retrieve the configuration based on the environment."""
+    env = os.environ.get('FLASK_ENV', 'default')  # Default to 'default' if FLASK_ENV is not set Hint: FLASK_ENV=development && flask run
+    return config(env)
 
 
 def createApp():
@@ -19,8 +25,7 @@ def createApp():
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}) # restrict it to specific origins React deafult clinet 
 
     # Load configurations based on the environment
-    env = os.environ.get('FLASK_ENV', 'default')  # Default to 'default' if FLASK_ENV is not set Hint: FLASK_ENV=development && flask run
-    app.config.from_object(config[env])  # Load config class based on the environment
+    app.config.from_object(get_config())
 
     # Initialize extensions
     db.init_app(app)
