@@ -10,9 +10,6 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 
-import { AuthProvider } from './context/AuthContext';
-
-
 import './App.css';
 
 const App = () => {
@@ -33,7 +30,7 @@ const App = () => {
           <Route path="/account" element={<AccountContainer />} />
 
           {/* Default to InfoContainer if no path is specified */}
-          <Route path="/" element={<InfoContainer />} />
+          <Route path="/" element={<ProtectedRoute>     <InfoContainer />     </ProtectedRoute>} />
         </Routes>
       </div>
 
