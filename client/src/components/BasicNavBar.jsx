@@ -1,6 +1,35 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+
+// Main Navbar Component
+const Navbar = () => {
+  const { isLoggedIn, logout } = useAuth();
+
+  return (
+    <NavbarContainer>
+      <NavbarContent>
+        <NavbarLinks>
+          <NavbarLink><Link to="/info">Info</Link></NavbarLink>
+          <NavbarLink><Link to="/search">Search</Link></NavbarLink>
+          <NavbarLink><Link to="/topics">Topics</Link></NavbarLink>
+          {!isLoggedIn ? (
+          <NavbarLink><Link to="/account">Account</Link></NavbarLink>
+            ) : (
+                    <NavbarLink><Link onClick={logout} to="/account">Logout</Link></NavbarLink>
+                )}
+        </NavbarLinks>
+      </NavbarContent>
+    </NavbarContainer>
+  );
+};
+
+export default Navbar;
+
+
+
 
 
 const NavbarContainer = styled.header`
@@ -62,21 +91,3 @@ const NavbarLink = styled.li`
     }
   }
 `;
-
-// Main Navbar Component
-const Navbar = () => {
-  return (
-    <NavbarContainer>
-      <NavbarContent>
-        <NavbarLinks>
-          <NavbarLink><Link to="/info">Info</Link></NavbarLink>
-          <NavbarLink><Link to="/search">Search</Link></NavbarLink>
-          <NavbarLink><Link to="/topics">Topics</Link></NavbarLink>
-          <NavbarLink><Link to="/account">Account</Link></NavbarLink>
-        </NavbarLinks>
-      </NavbarContent>
-    </NavbarContainer>
-  );
-};
-
-export default Navbar;
