@@ -67,10 +67,10 @@ def delete_info():
 
 def cleanup_list(input_list):
     input_list = get_unique_list_of_dictionaries(input_list)
-    input_list = remove_in_complete_input(input_list)
+    input_list = remove_incomplete_input(input_list)
     return input_list
 
-def remove_in_complete_input(input_list):
+def remove_incomplete_input(input_list):
     """
         take a list of dictionaries,
         this method responsibility is to check for each dictionary in the list

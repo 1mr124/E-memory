@@ -14,23 +14,20 @@ bp = Blueprint('main', __name__)
 @bp.route('/info', methods=['POST'])
 @jwt_required()
 def create_info():
-    try:
-        user_id = get_jwt_identity()
-        texts = json.loads(request.form.get('texts', '[]'))
-        links = json.loads(request.form.get('links', '[]'))
-        files = request.files.getlist('Pic-File')
-        search_key = request.form.get('key')
-        topic_id = request.form.get('topic_id')
+    user_id = get_jwt_identity()
+    texts = json.loads(request.form.get('texts', '[]'))
+    links = json.loads(request.form.get('links', '[]'))
+    files = request.files.getlist('Pic-File')
+    search_key = request.form.get('key')
+    topic_id = request.form.get('topic_id')
 
-        return info_controller.create_info(
-                user_id,
-                search_key,
-                topic_id,
-                texts,
-                links,
-                files)
-    except Exception as e:
-        return jsonify({"message": f"Failed to create info due to {e}"}), 500
+    return info_controller.create_info(
+        user_id,
+        search_key,
+        topic_id,
+        texts,
+        links,
+        files)
 
 
 @bp.route('/info', methods=['GET'])
