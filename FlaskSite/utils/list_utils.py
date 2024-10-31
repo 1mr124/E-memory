@@ -2,7 +2,7 @@ def get_unique_list_of_dictionaries(list_of_dictionaries):
     """
     remove duplicates from a list and return a new list of all unique dictionaries.
     """
-    taken = set()
+    seen = set()
     unique_list = []
 
     for dictionary in list_of_dictionaries:
@@ -10,8 +10,8 @@ def get_unique_list_of_dictionaries(list_of_dictionaries):
         for key in dictionary:
             dic_key += str(dictionary[key])
             dic_key += '[#]'
-        if dic_key not in taken:
+        if dic_key not in seen:
             unique_list.append(dictionary)
-            taken.add(dic_key)
+            seen.add(dic_key)
 
     return unique_list
