@@ -21,18 +21,14 @@ def create_info():
         files = request.files.getlist('Pic-File')
         search_key = request.form.get('key')
         topic_id = request.form.get('topic_id')
-        if search_key is None:
-            return jsonify({"message": "Key is required"}), 400
 
-        if info_controller.create_info(
+        return info_controller.create_info(
                 user_id,
                 search_key,
                 topic_id,
                 texts,
                 links,
-                files):
-            return jsonify({"message": "Info created successfully"}), 200
-        return jsonify({"message": "Failed to create info"}), 200
+                files)
     except Exception as e:
         return jsonify({"message": f"Failed to create info due to {e}"}), 500
 

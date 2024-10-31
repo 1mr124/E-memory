@@ -1,4 +1,7 @@
 def get_unique_list_of_dictionaries(list_of_dictionaries):
+    """
+    remove duplicates from a list and return a new list of all unique dictionaries.
+    """
     taken = set()
     unique_list = []
 

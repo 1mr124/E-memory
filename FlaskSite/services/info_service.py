@@ -6,14 +6,10 @@ import uuid
 
 
 def create_info(user_id, search_key, topic_id):
-    try:
-        info = Info(user_id=user_id, key=search_key, topic_id=topic_id)
-        db.session.add(info)
-        db.session.commit()
-        print("info created")
-    except Exception as e:
-        print(e)
-        return False
+    info = Info(user_id=user_id, key=search_key, topic_id=topic_id)
+    db.session.add(info)
+    db.session.commit()
+    print("info created")
 
 
 def get_info_id(user_id, search_key, topic_id, create_if_missing=False):
