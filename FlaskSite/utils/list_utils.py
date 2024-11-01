@@ -6,10 +6,7 @@ def get_unique_list_of_dictionaries(list_of_dictionaries):
     unique_list = []
 
     for dictionary in list_of_dictionaries:
-        dic_key = ''
-        for key in dictionary:
-            dic_key += str(dictionary[key])
-            dic_key += '[#]'
+        dic_key = frozenset(dictionary.items())
         if dic_key not in seen:
             unique_list.append(dictionary)
             seen.add(dic_key)
