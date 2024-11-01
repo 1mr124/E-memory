@@ -75,10 +75,10 @@ def remove_incomplete_input(input_list):
         take a list of dictionaries,
         this method responsibility is to check for each dictionary in the list
         it contains a value for a predefined key from must_exist_values
-        key = headline
-        if a dictionary contains key = headline, so it must be not empty, spaces or None
+        key = text
+        if a dictionary contains key = text, so it must be not empty, spaces or None
     """
-    must_exist_values = ['headline', 'text', 'path', 'header', 'link']
+    must_exist_values = ['text', 'path', 'header', 'link']
     new_list = []
     print(input_list)
     for current_dic in input_list:
