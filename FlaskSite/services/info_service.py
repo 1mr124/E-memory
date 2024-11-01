@@ -6,14 +6,10 @@ import uuid
 
 
 def create_info(user_id, search_key, topic_id):
-    try:
-        info = Info(user_id=user_id, key=search_key, topic_id=topic_id)
-        db.session.add(info)
-        db.session.commit()
-        print("info created")
-    except Exception as e:
-        print(e)
-        return False
+    info = Info(user_id=user_id, key=search_key, topic_id=topic_id)
+    db.session.add(info)
+    db.session.commit()
+    print("info created")
 
 
 def get_info_id(user_id, search_key, topic_id, create_if_missing=False):
@@ -60,11 +56,11 @@ def prepare_links(links):
 
 
 def prepare_pics(files):
+    items = []
     try:
-        items = []
         for file in files:
             if file and allowed_file(file.filename):
-                filename = uuid.uuid4() + file.filename.split(".")[1]
+                filename = str(uuid.uuid4()) + file.filename.split(".")[1]
                 file_utils.save_file(
                     current_app.config["IMG_FOLDER"], filename, file)
                 item = {
