@@ -14,11 +14,9 @@ def create_topic():
     user_id = get_jwt_identity()
     json = request.get_json()
 
-    if not all_required_exist(json, ['title']):
-        return jsonify({"error": "Title is required"}), 400
+    title = format_text(json['title'])
+    parent_id = format_text(json['parent'])
 
-    title = json['title']
-    parent_id = json['parent']
     return add_new_topic(user_id=user_id, title=title, parent_id=parent_id)
 
 
@@ -56,5 +54,8 @@ def search_topic():
     else:
         return jsonify({"message": "Topic not found"}), 404
 
-def all_required_exist(json, list_of_required_keys):
-    return all(key in json for key in list_of_required_keys)
+def format_text(text):
+    text = text.strip()
+    if text == '':
+        text = None
+    return text

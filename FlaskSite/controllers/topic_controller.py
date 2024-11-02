@@ -22,7 +22,7 @@ def add_new_topic(user_id, title, parent_id):
 
         add_topic(user_id, title, parent_id)
         topic = get_topic_by_name(user_id, title)
-        print(f'topic {topic} added ')
+        print(f'topic {topic} added')
         return jsonify({"Message": "topic created"}), 201
     except Exception as e:
         print(f'exception during add new topic: {e}')
