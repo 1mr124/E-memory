@@ -37,7 +37,7 @@ const authService = {
         {},
         {
           headers: {
-            Cookie: 'refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczMDU1NDI0MCwianRpIjoiNWExM2FiMDUtMjM1Ny00NDFiLWFhODgtMzAzODA0NjFlYzQzIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOjEsIm5iZiI6MTczMDU1NDI0MCwiY3NyZiI6IjI4MDUwOTdhLWE5MzItNGQxNi05OTc0LTU5MjUyZDE3OTQ2NCIsImV4cCI6MTczMTE1OTA0MH0.VoaaWYFwi7gAVrFKyvPu7CvQscmppESubVV5Ef07YpM'
+            Cookie: 'refresh_token=EXMAPLE.txt'
           }
         }
       );
