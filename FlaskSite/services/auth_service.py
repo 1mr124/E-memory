@@ -1,5 +1,5 @@
 from FlaskSite.models import User, db
-from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token
+from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token, decode_jwt_token
 
 
 def register(user: User):
@@ -21,3 +21,15 @@ def login(username, password):
         refresh_token = generate_refresh_token(user.id)
         return True, access_token, refresh_token
     return False, None, None
+
+
+def refresh_access_token(refresh_token):
+    # Validate refresh token after decoding it 
+    decoded_token = decode_jwt_token(refresh_token)
+    identity = decoded_token.get("sub")
+    if not identity:
+        raise ValueError("Invalid Token Identity")
+    
+    # Generate a new access token 
+    new_access_token = generate_token(identity)
+    return new_access_token

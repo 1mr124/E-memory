@@ -30,3 +30,17 @@ def login(username, password):
         return response, 200
     except Exception as e:
         return jsonify({"message": f"An error occurred {e}"}), 500
+
+
+
+def refresh_access_token(refresh_token):
+    try:
+        new_access_token = auth_service.refresh_access_token(refresh_token)
+        return jsonify({"message": "Access token refreshed", "access_token": new_access_token}), 200
+    except ValueError as e:
+        # to-do log {e} errors
+        print(e)
+        return jsonify({"message": str(e)}), 401  # Unauthorized
+    except Exception as e:
+        print(e)
+        return jsonify({"message": f"An error occurred"}), 500
