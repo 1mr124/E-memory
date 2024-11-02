@@ -1,6 +1,7 @@
 from FlaskSite.services import auth_service
 from FlaskSite.models import User
 from flask import jsonify,current_app
+from constants import TokenMessages
 
 
 def register(username, password, email):
@@ -39,7 +40,7 @@ def login(username, password):
         return response, 200
     except Exception as e:
         # To-do Log it
-        return jsonify({"message": f"An error occurred"}), 500
+        return jsonify({"message": TokenMessages.GENERIC_ERROR}), 500
 
 
 
@@ -47,9 +48,9 @@ def refresh_access_token(refresh_token):
     try:
         success, result = auth_service.refresh_access_token(refresh_token)
         if not success:
-            if result == "Token expired":
+            if result == TokenMessages.TOKEN_EXPIRED:
                 # Clear the expired refresh token in the response
-                response = jsonify({"message": "Refresh token expired"})
+                response = jsonify({"message": TokenMessages.TOKEN_EXPIRED})
                 response.status_code = 401
                 response.delete_cookie('refresh_token')  # Optional: clear cookie if used
                 return response
@@ -57,7 +58,7 @@ def refresh_access_token(refresh_token):
                 return jsonify({"message": result}), 401  # Other token-related errors
 
         # Return the new access token
-        return jsonify({"message": "Access token refreshed", "access_token": result}), 200
+        return jsonify({"message": TokenMessages.TOKEN_REFRESHED, "access_token": result}), 200
     except Exception as e:
         # to-do mvoe Log the exception for debugging and return a generic error message
-        return jsonify({"message": "An error occurred"}), 500
+        return jsonify({"message": TokenMessages.GENERIC_ERROR}), 500

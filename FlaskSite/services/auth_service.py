@@ -1,6 +1,8 @@
 from FlaskSite.models import User, db
 from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token, decode_jwt_token
 import datetime
+from constants import TokenMessages
+
 
 def register(user: User):
     try:
@@ -37,15 +39,15 @@ def refresh_access_token(refresh_token):
         current_time = datetime.datetime.now(datetime.timezone.utc)
 
         if exp_datetime < current_time:
-            return False, "Token expired" 
+            return False, TokenMessages.TOKEN_EXPIRED 
         
         # If token is valid, generate a new access token
         identity = decoded_token.get("sub")
         if not identity:
-            return False, "Invalid Token Identity"
+            return False, TokenMessages.INVALID_TOKEN_IDENTITY
         
         new_access_token = generate_token(identity)
         return True, new_access_token
     except Exception as e:
         # To-do log the Exception
-        return False, "An error occurred while processing the token"
+        return False, TokenMessages.GENERIC_ERROR
