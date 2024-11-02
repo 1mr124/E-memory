@@ -11,5 +11,8 @@ def add_topic(user_id, name, parent_id):
 def get_topic(user_id, topic_id):
     return db.session.query(Topic).filter_by(user_id=user_id, id=topic_id).one_or_none()
 
+def get_topics(user_id):
+    return db.session.query(Topic).filter_by(user_id=user_id).all()
+
 def get_topic_by_name(user_id, topic_name):
     return db.session.query(Topic).filter_by(user_id=user_id, name=topic_name).one_or_none()
