@@ -24,9 +24,8 @@ def login(username, password):
         # Create a response object
         response = jsonify({"message": "Login successful", "access_token": token})
         secure_cookie = current_app.config['SECURE_COOKIE']
-
-        # Set the refresh token as a secure cookie
-        response.set_cookie('refresh_token', refresh_token, httponly=True, secure=secure_cookie, samesite='Lax', path='/')
+        # Set the refresh token as a secure cookie should be: response.set_cookie('refresh_token', refresh_token, httponly=True, secure=secure_cookie, samesite='None', path='/')
+        response.set_cookie('refresh_token', refresh_token)
         return response, 200
     except Exception as e:
         return jsonify({"message": f"An error occurred {e}"}), 500
@@ -36,7 +35,7 @@ def login(username, password):
 def refresh_access_token(refresh_token):
     try:
         success, result = auth_service.refresh_access_token(refresh_token)
-        
+        print(success,result,sep="      -       ")
         if not success:
             if result == "Token expired":
                 return jsonify({"message": "Refresh token expired"}), 401  

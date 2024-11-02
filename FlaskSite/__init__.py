@@ -22,7 +22,7 @@ def createApp():
     app = Flask(__name__)
 
     # Enable CORS (Adjust as needed)
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True) # restrict it to specific origins React deafult clinet 
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000", "supports_credentials": True}}) # restrict it to specific origins React deafult clinet 
 
     # Load configurations based on the environment
     app.config.from_object(get_config())

@@ -38,10 +38,8 @@ authApi.interceptors.response.use(
     // Check if the error response is a 401 Unauthorized
     if (error.response && error.response.status === 401) {
       try {
-        // Try refreshing the access token
-        const refreshed = await authService.refreshAccessToken();
-
-        // If refresh is successful, retry the original request
+        // Try refreshing the access token        
+        const refreshed = await authService.refreshAccessToken();        // If refresh is successful, retry the original request
         if (refreshed) {
           const token = authService.getToken(); // Get the new token
 
