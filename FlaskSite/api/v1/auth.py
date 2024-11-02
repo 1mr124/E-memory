@@ -33,6 +33,7 @@ def login():
 @bp.route('/auth/refresh', methods=['POST'])
 def refresh_token():
     # validate if the cookie has the refresh token
+    # to-do is to move refresh_token to constants.py
     refresh_token = request.cookies.get('refresh_token')
 
     if not refresh_token:

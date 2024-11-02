@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authService from '../services/authService'; // Import the auth service
+import { navigateToLogin } from '../utils/navigation';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -13,11 +14,9 @@ authApi.interceptors.request.use((config) => {
   const token = authService.getToken(); // Get token from authService
 
   // Check if the token exists
-  if (!token) {
-    console.log("no token found a7a");
-    
+  if (!token) {    
     // If no token is present, gracefully handle the missing token
-    window.location.href = '/account'; // Redirect to login page
+    navigateToLogin(); // Redirect to login page
     return Promise.reject(new Error('No token available, user needs to log in')); // Cancel the request
   }
 
@@ -51,13 +50,13 @@ authApi.interceptors.response.use(
         } else {
           // If refresh fails, redirect to the login page
           authService.removeToken();
-          window.location.href = '/account'; // Redirect to login page
+          navigateToLogin(); // Redirect to login page
         }
       } catch (refreshError) {
         // Handle errors from the token refresh process
         console.error('Error refreshing token', refreshError);
         authService.removeToken();
-        window.location.href = '/account'; // Redirect to login page
+        navigateToLogin(); // Redirect to login page
       }
     }
 

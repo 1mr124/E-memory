@@ -1,10 +1,13 @@
 import publicApi from '../api/publicApi';
 
+const TOKEN_KEY = 'authToken';
+
+
 const authService = {
-    getToken: () => sessionStorage.getItem('authToken'),
-    setToken: (token) => sessionStorage.setItem('authToken', token),
-    removeToken: () => sessionStorage.removeItem('authToken'),
-    isAuthenticated: () => !!sessionStorage.getItem('authToken'),
+    getToken: () => sessionStorage.getItem(TOKEN_KEY),
+    setToken: (token) => sessionStorage.setItem(TOKEN_KEY, token),
+    removeToken: () => sessionStorage.removeItem(TOKEN_KEY),
+    isAuthenticated: () => !!sessionStorage.getItem(TOKEN_KEY),
 
     refreshAccessToken: async () => {
         try {
@@ -19,7 +22,12 @@ const authService = {
 
             return newAccessToken;
         } catch (error) {
-            console.error('Failed to refresh access token', error);
+            if (error.response && error.response.status === 401 && error.response.data.message === 'Refresh token expired') {
+                authService.removeToken();
+                navigateToLogin();  // Redirect to login if refresh token is expired
+                return null;
+            }
+            console.error('Failed to refresh access token', error.response?.data || error);
             return null; // Return null if the refresh fails
         }
     }

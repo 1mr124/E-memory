@@ -35,16 +35,18 @@ def login(username, password):
 def refresh_access_token(refresh_token):
     try:
         success, result = auth_service.refresh_access_token(refresh_token)
-        print(success,result,sep="      -       ")
         if not success:
             if result == "Token expired":
-                return jsonify({"message": "Refresh token expired"}), 401  
+                # Clear the expired refresh token in the response
+                response = jsonify({"message": "Refresh token expired"})
+                response.status_code = 401
+                response.delete_cookie('refresh_token')  # Optional: clear cookie if used
+                return response
             else:
                 return jsonify({"message": result}), 401  # Other token-related errors
 
         # Return the new access token
         return jsonify({"message": "Access token refreshed", "access_token": result}), 200
     except Exception as e:
-        # Log the exception for debugging and return a generic error message
-        print(e)
+        # to-do mvoe Log the exception for debugging and return a generic error message
         return jsonify({"message": "An error occurred"}), 500
