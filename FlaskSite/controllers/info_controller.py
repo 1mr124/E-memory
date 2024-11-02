@@ -1,6 +1,7 @@
 from flask import jsonify
 
 from FlaskSite.services import info_service
+from FlaskSite.services.topic_service import get_topic
 from FlaskSite.utils.list_utils import get_unique_list_of_dictionaries
 
 
@@ -16,6 +17,8 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
     texts = cleanup_list(texts)
     links = cleanup_list(links)
     files = cleanup_list(files)
+    if topic_id == '':
+        topic_id = None
 
     if search_key is None:
         print("failed to create info, search key is None")
@@ -25,6 +28,11 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
     if len(texts) == 0 and len(links) == 0 and len(files) == 0:
         print("failed to create info, no text or no links or no files")
         return jsonify({"message": "Failed to create info, info does not contain at least any text, link or file"}), 400
+
+    if topic_id is not None and get_topic(user_id, topic_id) is None:
+        print("failed to create info, topic id is invalid")
+        return jsonify({"message": "Failed to create info, topic id is invalid"}), 400
+
     try:
         info_id = info_service.get_info_id(user_id, search_key, topic_id, create_if_missing=True)
         if info_id is None:
