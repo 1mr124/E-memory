@@ -35,12 +35,17 @@ def login(username, password):
 
 def refresh_access_token(refresh_token):
     try:
-        new_access_token = auth_service.refresh_access_token(refresh_token)
-        return jsonify({"message": "Access token refreshed", "access_token": new_access_token}), 200
-    except ValueError as e:
-        # to-do log {e} errors
-        print(e)
-        return jsonify({"message": str(e)}), 401  # Unauthorized
+        success, result = auth_service.refresh_access_token(refresh_token)
+        
+        if not success:
+            if result == "Token expired":
+                return jsonify({"message": "Refresh token expired"}), 401  
+            else:
+                return jsonify({"message": result}), 401  # Other token-related errors
+
+        # Return the new access token
+        return jsonify({"message": "Access token refreshed", "access_token": result}), 200
     except Exception as e:
+        # Log the exception for debugging and return a generic error message
         print(e)
-        return jsonify({"message": f"An error occurred"}), 500
+        return jsonify({"message": "An error occurred"}), 500
