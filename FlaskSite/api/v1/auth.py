@@ -30,7 +30,7 @@ def login():
 
 
 
-@bp.route('/refresh', methods=['POST'])
+@bp.route('/auth/refresh', methods=['POST'])
 def refresh_token():
     # validate if the cookie has the refresh token
     refresh_token = request.cookies.get('refresh_token')
