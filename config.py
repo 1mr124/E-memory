@@ -11,7 +11,6 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = os.environ.get('JWT_ACCESS_TOKEN_EXPIRES') or timedelta(minutes=15)  # Short-lived access token
     JWT_REFRESH_TOKEN_EXPIRES = os.environ.get('JWT_REFRESH_TOKEN_EXPIRES') or timedelta(days=7)  # Long-lived refresh token
     IMG_FOLDER = os.path.join(basedir, 'instance', 'uploads')
-    SECURE_COOKIE = os.environ.get('SECURE_COOKIE', 'False') # Default to False in development
 
 
 class DevelopmentConfig(Config):
@@ -28,6 +27,8 @@ class ProductionConfig(Config):
     DEBUG = False  # Set DEBUG to False in production
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SECURE_COOKIE = True  # Enable secure cookies in production
+
 
 config = {
     'development': DevelopmentConfig,

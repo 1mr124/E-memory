@@ -25,6 +25,16 @@ def login(username, password):
         response = jsonify({"message": "Login successful", "access_token": token})
         secure_cookie = current_app.config['SECURE_COOKIE']
         # Set the refresh token as a secure cookie should be: response.set_cookie('refresh_token', refresh_token, httponly=True, secure=secure_cookie, samesite='None', path='/')
+        if secure_cookie:
+                response.set_cookie(
+                'refresh_token',
+                refresh_token,
+                httponly=True,
+                secure=secure_cookie,  # Enforces HTTPS in production
+                samesite='None' if secure_cookie else 'Lax',  # Use 'None' for cross-site requests in production
+                path='/'
+            )
+            
         response.set_cookie('refresh_token', refresh_token)
         return response, 200
     except Exception as e:
