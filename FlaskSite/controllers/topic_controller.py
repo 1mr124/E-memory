@@ -26,4 +26,4 @@ def add_new_topic(user_id, title, parent_id):
         return jsonify({"message": "topic created"}), 201
     except Exception as e:
         print(f'exception during add new topic: {e}')
-        return jsonify({"error": "failed to insert new topic"}), 400
+        return jsonify({"error": "failed to insert new topic"}), 500
