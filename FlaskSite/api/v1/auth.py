@@ -37,6 +37,6 @@ def refresh_token():
     refresh_token = request.cookies.get('refresh_token')
 
     if not refresh_token:
-        return jsonify({"msg": "Missing refresh token"}), 401
+        return jsonify({"message": "Missing refresh token"}), 401
 
     return auth_controller.refresh_access_token(refresh_token)

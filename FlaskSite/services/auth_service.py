@@ -47,4 +47,5 @@ def refresh_access_token(refresh_token):
         new_access_token = generate_token(identity)
         return True, new_access_token
     except Exception as e:
-        return False, str(e)
+        # To-do log the Exception
+        return False, "An error occurred while processing the token"

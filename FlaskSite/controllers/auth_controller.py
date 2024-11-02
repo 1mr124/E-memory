@@ -38,7 +38,8 @@ def login(username, password):
         response.set_cookie('refresh_token', refresh_token)
         return response, 200
     except Exception as e:
-        return jsonify({"message": f"An error occurred {e}"}), 500
+        # To-do Log it
+        return jsonify({"message": f"An error occurred"}), 500
 
 
 
