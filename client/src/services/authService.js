@@ -9,7 +9,7 @@ const authService = {
     refreshAccessToken: async () => {
         try {
             // Make a request to get the new access token
-            const response = await publicApi.post('/auth/refresh');
+            const response = await publicApi.post(' /api/v1/auth/refresh');
             
             // Extract the new access token from the response
             const newAccessToken = response.data.access_token;
