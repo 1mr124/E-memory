@@ -18,7 +18,7 @@ def add_new_topic(user_id, title, parent_id):
             # we can set parent id to None and continue, but the user won't know what happen
             # print(f'set parent_id to None')
             # parent_id = None
-            return jsonify({"error": "parent_id does not exist"}), 400
+            return jsonify({"error": "parent topic does not exist"}), 400
 
         add_topic(user_id, title, parent_id)
         topic = get_topic_by_name(user_id, title)
