@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from FlaskSite.services.topic_service import get_topic, add_topic, get_topic_by_name
+from FlaskSite.services.topic_service import get_topic, add_topic, get_topic_by_name, get_topics
 
 
 def add_new_topic(user_id, title, parent_id):
@@ -27,3 +27,11 @@ def add_new_topic(user_id, title, parent_id):
     except Exception as e:
         print(f'exception during add new topic: {e}')
         return jsonify({"error": "failed to insert new topic"}), 500
+def get_all_topics(user_id):
+    try:
+        print(f'get all topics for user: {user_id}')
+        topics_list = [{'id': topic.id, 'title': topic.name} for topic in get_topics(user_id)]
+        return jsonify({"topics": topics_list}), 200
+    except Exception as e:
+        print(f'exception during add new topic: {e}')
+        return jsonify({"error": "failed to get topics"}), 500

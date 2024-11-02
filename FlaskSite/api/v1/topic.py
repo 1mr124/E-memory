@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from FlaskSite.controllers.topic_controller import add_new_topic
+from FlaskSite.controllers.topic_controller import add_new_topic, get_all_topics
 from FlaskSite.forms import NewTopic
 from FlaskSite.models import db, Topic, SearchKey, Info
+
 
 bp = Blueprint('topic', __name__)
 
@@ -19,6 +20,11 @@ def create_topic():
 
     return add_new_topic(user_id=user_id, title=title, parent_id=parent_id)
 
+@bp.route('/topic/all', methods=['GET'])
+@jwt_required()
+def get_topics():
+    user_id = get_jwt_identity()
+    return get_all_topics(user_id=user_id)
 
 @bp.route('/delete', methods=['POST'])
 def delete_topic():
