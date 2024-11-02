@@ -1,4 +1,7 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from FlaskSite.controllers.topic_controller import add_new_topic
 from FlaskSite.forms import NewTopic
 from FlaskSite.models import db, Topic, SearchKey, Info
 
@@ -6,25 +9,15 @@ bp = Blueprint('topic', __name__)
 
 
 @bp.route('/topic/create', methods=['POST'])
+@jwt_required()
 def create_topic():
-    data = request.get_json()
+    user_id = get_jwt_identity()
+    json = request.get_json()
 
-    # Validate data
-    if not data or 'title' not in data or 'parent' not in data:
-        return jsonify({"error": "Title and parent fields are required"}), 400
+    title = format_text(json['title'])
+    parent_id = format_text(json['parent'])
 
-    title = data['title']
-    parent = data['parent']
-
-    try:
-        # Assume we have a function `add_topic_to_db` to handle database logic
-        print("Topic added",title,"Parent: ",parent)
-        return jsonify({
-            "message": "Topic added successfully",
-        }), 201
-    except Exception as e:
-        print(f"Error adding topic to database: {e}")
-        return jsonify({"error": "Failed to add topic"}), 500
+    return add_new_topic(user_id=user_id, title=title, parent_id=parent_id)
 
 
 @bp.route('/delete', methods=['POST'])
@@ -60,3 +53,9 @@ def search_topic():
         return jsonify({"info": info_list, "search_keys": search_keys}), 200
     else:
         return jsonify({"message": "Topic not found"}), 404
+
+def format_text(text):
+    text = text.strip()
+    if text == '':
+        text = None
+    return text

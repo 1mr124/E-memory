@@ -1,6 +1,5 @@
 """Module providing a functions for running the flask"""
 
-from FlaskSite import createApp
 import subprocess
 import sys
 
@@ -10,19 +9,8 @@ def get_run_configuration():
     return len(sys.argv) == 2
 
 
-def generate_requirements():
-    with open('requirements.txt', 'w') as f:
-        subprocess.run(
-            [sys.executable, '-m', 'pip', 'freeze'],
-            stdout=f,                     # Redirect stdout to the file
-            stderr=subprocess.DEVNULL      # Suppress stderr (errors)
-        )
-    print("requirements.txt generated successfully.")
-
-
 def install_requirements():
     try:
-        generate_requirements()
         subprocess.check_call(
             [sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'],
             stdout=subprocess.DEVNULL,  # Suppress stdout
@@ -37,6 +25,7 @@ def main():
     """Main entry point for the script."""
     # Call the function to install requirements
     install_requirements()
+    from FlaskSite import createApp
     app = createApp()
     run_config = get_run_configuration()
 
@@ -51,4 +40,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # Trying Temp Test (Where is my mind)
