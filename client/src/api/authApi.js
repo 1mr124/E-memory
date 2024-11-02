@@ -28,16 +28,45 @@ authApi.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-// Add response interceptor to handle token expiration and redirect the user to the login route
-authApi.interceptors.response.use((response) => {
-  return response;
-}, (error) => {
-  if (error.response && error.response.status === 401) {
-    authService.removeToken(); // Remove token via auth service
-    // Redirect to login
-    window.location.href = '/account';
+
+// Add response interceptor to handle token expiration and refresh the token if needed
+authApi.interceptors.response.use(
+  (response) => {
+    return response; // Return the response if successful
+  },
+  async (error) => {
+    // Check if the error response is a 401 Unauthorized
+    if (error.response && error.response.status === 401) {
+      try {
+        // Try refreshing the access token
+        const refreshed = await authService.refreshAccessToken();
+
+        // If refresh is successful, retry the original request
+        if (refreshed) {
+          const token = authService.getToken(); // Get the new token
+
+          // Update the Authorization header with the new token
+          error.config.headers.Authorization = `Bearer ${token}`;
+
+          // Retry the original request with the new token
+          return authApi.request(error.config);
+        } else {
+          // If refresh fails, redirect to the login page
+          authService.removeToken();
+          window.location.href = '/account'; // Redirect to login page
+        }
+      } catch (refreshError) {
+        // Handle errors from the token refresh process
+        console.error('Error refreshing token', refreshError);
+        authService.removeToken();
+        window.location.href = '/account'; // Redirect to login page
+      }
+    }
+
+    // If the error is not 401, or if token refresh fails, reject the error
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
-});
+);
+
 
 export default authApi;
