@@ -13,8 +13,6 @@ const TopicsContainer = () => {
         { label: 'Delete', value: 'delete' }
     ];
     const [activeInput, setActiveInput] = useState('search');
-    const [topics, setTopics] = useState([{ title: '', description: '' }]);
-    const [searchTerm, setSearchTerm] = useState('');
 
     const renderInput = () => {
         switch (activeInput) {

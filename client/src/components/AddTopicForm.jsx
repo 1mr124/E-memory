@@ -1,19 +1,46 @@
-// src/components/AddTopicForm/AddTopicForm.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import authApi from '../api/authApi';
 
-const AddTopicForm = ({ topics, setTopics }) => {
-    const [newTopic, setNewTopic] = useState({ title: '', description: '' });
+const AddTopicForm = () => {
+    const [newTopic, setNewTopic] = useState({ title: '', parent: '' });
+    const [feedbackMessage, setFeedbackMessage] = useState({ message: '', success: false });
 
-    const handleAddTopic = (e) => {
+    const handleAddTopic = async (e) => {
         e.preventDefault();
         if (newTopic.title.trim() === '') {
-            alert('Topic title cannot be empty.');
+            setFeedbackMessage({ message: 'Topic title cannot be empty.', success: false });
+            // Clear the feedback message after 3 seconds
+            setTimeout(() => {
+                setFeedbackMessage({ message: '', success: false });
+            }, 3000);
             return;
         }
-        setTopics([...topics, newTopic]);
-        setNewTopic({ title: '', description: '' });
-        console.log('Added Topic:', newTopic);
+
+        try {
+            // Send POST request to add topic
+            const response = await authApi.post('/api/v1/topic/create', newTopic);
+
+            // Check if the server responded with a 201 status
+            if (response.status === 201) {
+                setFeedbackMessage({ message: 'Topic added successfully!', success: true });
+                
+                // Reset the form fields
+                setNewTopic({ title: '', parent: '' });
+            } else {
+                // If the response is not 201, show a generic failure message
+                setFeedbackMessage({ message: 'Failed to add topic. Please try again.', success: false });
+            }
+        } catch (error) {
+            // Display error message on request failure
+            setFeedbackMessage({ message: 'Failed to add topic. Please try again.', success: false });
+            console.error('Error adding topic:', error);
+        } finally {
+            // Clear the feedback message after 3 seconds
+            setTimeout(() => {
+                setFeedbackMessage({ message: '', success: false });
+            }, 3000);
+        }
     };
 
     return (
@@ -28,10 +55,13 @@ const AddTopicForm = ({ topics, setTopics }) => {
             <Input
                 type="text"
                 placeholder="Parent"
-                value={newTopic.description}
-                onChange={(e) => setNewTopic({ ...newTopic, description: e.target.value })}
+                value={newTopic.parent}
+                onChange={(e) => setNewTopic({ ...newTopic, parent: e.target.value })}
             />
             <SubmitButton type="submit">Add Topic</SubmitButton>
+            {feedbackMessage.message && (
+                <Feedback $success={feedbackMessage.success}>{feedbackMessage.message}</Feedback>
+            )}
         </Form>
     );
 };
@@ -67,6 +97,11 @@ const SubmitButton = styled.button`
     &:hover {
         background-color: #003d80;
     }
+`;
+
+const Feedback = styled.p`
+    color: ${props => props.$success ? 'green' : 'red'};
+    margin-top: 8px;
 `;
 
 export default AddTopicForm;
