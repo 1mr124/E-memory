@@ -53,16 +53,13 @@ const SignInForm = () => {
                 }
               });
 
-            const { token, message } = response.data;
-            console.log(message);
+              const { access_token, message } = response.data;
             
-
             // Check if the token exists and login is successful
-            if (token) {
-                login(token);
+            if (access_token) {
+                login(access_token);
                 setCredentials({ identifier: '', password: '' }); // Clear input fields
                 setError(null); // Clear any error messages
-                console.log('Login successful:', token);
 
                 // Redirect to /info after successful login
                 navigate('/info');

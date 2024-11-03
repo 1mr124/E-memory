@@ -27,3 +27,16 @@ def login():
     username = form.userName.data
     password = form.password.data
     return auth_controller.login(username, password)
+
+
+
+@bp.route('/auth/refresh', methods=['POST'])
+def refresh_token():
+    # validate if the cookie has the refresh token
+    # to-do is to move refresh_token to constants.py
+    refresh_token = request.cookies.get('refresh_token')
+
+    if not refresh_token:
+        return jsonify({"message": TokenMessages.MISSING_TOKEN}), 401
+
+    return auth_controller.refresh_access_token(refresh_token)

@@ -1,12 +1,13 @@
 import axios from 'axios';
 import authService from '../services/authService'; // Import the auth service
+import { navigateToLogin } from '../utils/navigation';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
 
 // Create Axios instance
 const publicApi = axios.create({
   baseURL: apiUrl,
+  withCredentials: true, // Enable credentials to send cookies with requests
 });
 
 // Add request interceptor to include the token in the Authorization header
@@ -14,7 +15,9 @@ publicApi.interceptors.request.use((config) => {
   const token = authService.getToken(); // Get token from authService
   
   // If token exists, set Authorization header
-  config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 }, (error) => {
   return Promise.reject(error);
@@ -27,7 +30,7 @@ publicApi.interceptors.response.use((response) => {
   if (error.response && error.response.status === 401) {
     authService.removeToken(); // Remove token via auth service
     // Redirect to login
-    window.location.href = '/account';
+    navigateToLogin();
   }
   return Promise.reject(error);
 });
