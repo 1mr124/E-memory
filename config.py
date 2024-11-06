@@ -11,7 +11,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = os.environ.get('JWT_ACCESS_TOKEN_EXPIRES') or timedelta(minutes=15)  # Short-lived access token
     JWT_REFRESH_TOKEN_EXPIRES = os.environ.get('JWT_REFRESH_TOKEN_EXPIRES') or timedelta(days=7)  # Long-lived refresh token
     IMG_FOLDER = os.path.join(basedir, 'instance', 'uploads')
-
+    SECURE_COOKIE = False
 
 class DevelopmentConfig(Config):
     DEBUG = True
