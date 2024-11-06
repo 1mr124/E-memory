@@ -1,4 +1,5 @@
 import publicApi from '../api/publicApi';
+import { navigateToLogin } from '../utils/navigation';
 
 const TOKEN_KEY = 'authToken';
 

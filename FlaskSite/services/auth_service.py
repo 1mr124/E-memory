@@ -1,7 +1,7 @@
 from FlaskSite.models import User, db
 from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token, decode_jwt_token
 import datetime
-from constants import TokenMessages
+from FlaskSite.constants import TokenMessages
 
 
 def register(user: User):
