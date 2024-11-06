@@ -2,6 +2,97 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaUpload, FaTrashAlt } from 'react-icons/fa';
 
+const Pic = ({ pics, setPics }) => {
+    const [visibleIndex, setVisibleIndex] = useState(0);
+
+    const handleChange = (index, field, value) => {
+        const updatedPics = [...pics];
+        updatedPics[index][field] = value;
+        setPics(updatedPics);
+    };
+
+    const addPic = (e) => {
+        e.preventDefault();
+        setPics([...pics, { headline: '', comment: '', pic: null }]);
+        setVisibleIndex(pics.length);
+    };
+
+    const toggleVisible = (e, index) => {
+        e.preventDefault();
+        setVisibleIndex(index);
+    };
+
+    const deletePic = (e, index) => {
+        e.preventDefault();
+        const updatedPics = pics.filter((_, i) => i !== index);
+        setPics(updatedPics);
+        setVisibleIndex(visibleIndex > index ? visibleIndex - 1 : 0);
+    };
+
+    const handleFileSelect = (e, index) => {
+        const file = e.target.files[0];
+        handleChange(index, 'pic', file);
+    };
+
+    return (
+        <Container>
+            <ButtonsContainer>
+                {pics.map((_, index) => (
+                    <CollapsedContainer key={index}>
+                        <CollapsedButton onClick={(e) => toggleVisible(e, index)}>
+                            Pic {index + 1}
+                        </CollapsedButton>
+                        {index !== 0 && (
+                            <DeleteButton onClick={(e) => deletePic(e, index)}>
+                                <FaTrashAlt />
+                            </DeleteButton>
+                        )}
+                    </CollapsedContainer>
+                ))}
+            </ButtonsContainer>
+
+            <PicContainer>
+                {pics.map((pic, index) => (
+                    visibleIndex === index && (
+                        <PicWrapper key={index}>
+                            <Headline
+                                value={pic.headline}
+                                onChange={(e) => handleChange(index, 'headline', e.target.value)}
+                                placeholder="Headline"
+                            />
+                            <UploadContainer>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleFileSelect(e, index)}
+                                    style={{ display: 'none' }}
+                                    id={`file-input-${index}`}
+                                />
+                                <label htmlFor={`file-input-${index}`}>
+                                    <UploadIcon size={40} />
+                                    <UploadText>Select Image</UploadText>
+                                </label>
+                            </UploadContainer>
+                            <Comment
+                                value={pic.comment}
+                                onChange={(e) => handleChange(index, 'comment', e.target.value)}
+                                placeholder="Comment"
+                            />
+                        </PicWrapper>
+                    )
+                ))}
+            </PicContainer>
+
+            <AddButton onClick={addPic}>Add New Pic</AddButton>
+        </Container>
+    );
+};
+
+export default Pic;
+
+
+
+
 const Container = styled.div`
     width: 100%;
     display: flex;
@@ -141,79 +232,3 @@ const UploadIcon = styled(FaUpload)`
         margin:0px 3px 6px 0;
     }
 `;
-
-const Pic = ({ pics, setPics }) => {
-    const [visibleIndex, setVisibleIndex] = useState(0);
-
-    const handleChange = (index, field, value) => {
-        const newPics = [...pics];
-        newPics[index][field] = value;
-        setPics(newPics);
-    };
-
-    const addPic = (e) => {
-        e.preventDefault(); // Prevent page reload
-        setPics([...pics, { headline: '', comment: '', image: null }]);
-        setVisibleIndex(pics.length); // Show the new input
-    };
-
-    const toggleVisible = (e, index) => {
-        e.preventDefault(); // Prevent page reload
-        setVisibleIndex(index);
-    };
-
-    const deletePic = (e, index) => {
-        e.preventDefault(); // Prevent page reload
-        const newPics = pics.filter((_, i) => i !== index);
-        setPics(newPics);
-        if (visibleIndex >= index) {
-            setVisibleIndex(visibleIndex - 1);
-        }
-    };
-
-    return (
-        <Container>
-            <ButtonsContainer>
-                {pics.map((_, index) => (
-                    <CollapsedContainer key={index}>
-                        <CollapsedButton onClick={(e) => toggleVisible(e, index)}>
-                            Pic {index + 1}
-                        </CollapsedButton>
-                        {index !== 0 && (
-                            <DeleteButton onClick={(e) => deletePic(e, index)}>
-                                <FaTrashAlt />
-                            </DeleteButton>
-                        )}
-                    </CollapsedContainer>
-                ))}
-            </ButtonsContainer>
-
-            <PicContainer>
-                {pics.map((pic, index) => (
-                    visibleIndex === index && (
-                        <PicWrapper key={index}>
-                            <Headline
-                                value={pic.headline}
-                                onChange={(e) => handleChange(index, 'headline', e.target.value)}
-                                placeholder="Headline"
-                            />
-                            <UploadContainer onClick={() => alert('Upload an image')}>
-                            <UploadIcon size={40} />
-                            <UploadText>Upload Image</UploadText>
-                            </UploadContainer>
-                            <Comment
-                                value={pic.comment}
-                                onChange={(e) => handleChange(index, 'comment', e.target.value)}
-                                placeholder="Comment"
-                            />
-                        </PicWrapper>
-                    )
-                ))}
-            </PicContainer>
-
-            <AddButton onClick={addPic}>Add New Pic</AddButton>
-        </Container>
-    );
-};
-
-export default Pic;

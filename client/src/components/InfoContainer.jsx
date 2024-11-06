@@ -12,92 +12,70 @@ const InfoContainer = () => {
     const navItems = [
         { label: 'Text', value: 'text' },
         { label: 'Link', value: 'link' },
-        { label: 'Pics', value: 'pics' }
+        { label: 'Pics', value: 'pics' },
     ];
 
     // State to hold text, link, and pic inputs
     const [texts, setTexts] = useState([{ headline: '', text: '', comment: '' }]);
     const [links, setLinks] = useState([{ headline: '', link: '', comment: '' }]);
     const [pics, setPics] = useState([{ headline: '', pic: null, comment: '' }]);
-    
-    // Add state for topic ID
     const [topicId, setTopicId] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = new FormData();
         const searchKey = document.querySelector('#searchKey').value;
         
-                
-        formData.append('key', searchKey); // Append search key
-        formData.append('topic_id', topicId); // Append topic ID
+        // Append main data fields
+        formData.append('key', searchKey);
+        formData.append('topic_id', topicId);
 
-         // Create arrays to hold texts, links, and pics
-        const allTexts = [];
-        const allLinks = [];
-        const allPics = [];
+        // Append texts, links, and pics as JSON strings
+        formData.append('texts', JSON.stringify(texts));
+        formData.append('links', JSON.stringify(links));
 
-        // Collect all texts
-        texts.forEach((item) => {
-            allTexts.push(item);
-        });
+        // Append pic metadata without files (headline and comment only)
+        const picData = pics.map(({ headline, comment }) => ({ headline, comment }));
+        formData.append('files', JSON.stringify(picData));
 
-        // Collect all links
-        links.forEach((item) => {
-            allLinks.push(item);
-        });
-
-        // Collect all pics
-        pics.forEach((item) => {
-            allPics.push(item);
-        });
-
-        // Append the arrays to FormData as JSON strings
-        formData.append('texts', JSON.stringify(allTexts));
-        formData.append('links', JSON.stringify(allLinks));
-        formData.append('files', JSON.stringify(allPics));
-
-        // Append pic files if any
-        pics.forEach((item) => {
+        // Append pic files with unique keys for backend processing
+        pics.forEach((item, index) => {
             if (item.pic) {
-                formData.append('Pic-File', item.pic); // Append actual files separately
+                formData.append(`Pic-File-${index}`, item.pic);
             }
         });
 
+        // Log form data for debugging
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
-        
 
-        const token = sessionStorage.getItem('authToken');
-
-        // Use axios request with .then() and .catch() instead of async/await
+        // Send form data to API
         authApi.post('/api/v1/info', formData, {
             headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    })
-    .then((response) => {
-        console.log('Info added:', response.data);
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+        .then((response) => {
+            console.log('Info added:', response.data);
 
-        // Reset input states after submission if needed
-        if (activeInput === 'text') setTexts([{ headline: '', text: '', comment: '' }]);
-        if (activeInput === 'link') setLinks([{ headline: '', link: '', comment: '' }]);
-        if (activeInput === 'pics') setPics([{ headline: '', pic: null, comment: '' }]);
-        setTopicId('');
-    })
-    .catch((error) => {
-        if (error.response) {
-            console.error('Server responded with:', error.response.data); // Log server response
-        } else if (error.request) {
-            console.error('No response received:', error.request);
-        } else {
-            console.error('Error setting up request:', error.message);
-        }
-    });
-    
-};
+            // Reset the form inputs after successful submission
+            setTexts([{ headline: '', text: '', comment: '' }]);
+            setLinks([{ headline: '', link: '', comment: '' }]);
+            setPics([{ headline: '', pic: null, comment: '' }]);
+            setTopicId('');
+        })
+        .catch((error) => {
+            if (error.response) {
+                console.error('Server responded with:', error.response.data);
+            } else if (error.request) {
+                console.error('No response received:', error.request);
+            } else {
+                console.error('Error setting up request:', error.message);
+            }
+        });
+    };
 
     const renderInput = () => {
         switch (activeInput) {
