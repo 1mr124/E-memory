@@ -1,7 +1,7 @@
 from FlaskSite.services import auth_service
 from FlaskSite.models import User
 from flask import jsonify,current_app
-from constants import TokenMessages
+from FlaskSite.constants import TokenMessages
 
 
 def register(username, password, email):
