@@ -1,4 +1,5 @@
 from flask import jsonify
+from werkzeug.datastructures import FileStorage
 
 from FlaskSite.services import info_service
 from FlaskSite.services.topic_service import get_topic
@@ -16,7 +17,11 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
 
     texts = cleanup_list(texts)
     links = cleanup_list(links)
-    files = cleanup_list(files)
+    #files = cleanup_list(files)
+
+    # Validate files (check if they are valid FileStorage objects)
+    valid_files = [file for file in files if file and isinstance(file, FileStorage)]
+
     if topic_id == '':
         topic_id = None
 
@@ -38,7 +43,7 @@ def create_info(user_id, search_key, topic_id, texts, links, files):
         if info_id is None:
             return jsonify({"message": "Failed to create info"}), 400
         print("info_id", info_id)
-        info_service.add_info_data(info_id, texts, links, files)
+        info_service.add_info_data(info_id, texts, links, valid_files)
         return jsonify({"message": "info created"}), 200
     except Exception as e:
         print("exception during insert new info", e)

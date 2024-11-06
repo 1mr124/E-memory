@@ -31,8 +31,11 @@ const Pic = ({ pics, setPics }) => {
 
     const handleFileSelect = (e, index) => {
         const file = e.target.files[0];
-        handleChange(index, 'pic', file);
+        if (file) {
+            handleChange(index, 'pic', file); 
+        }
     };
+    
 
     return (
         <Container>

@@ -34,14 +34,20 @@ const InfoContainer = () => {
         formData.append('texts', JSON.stringify(texts));
         formData.append('links', JSON.stringify(links));
     
-        // Append each image file individually with the key 'Pic-File'
+        // Append each image file using the same key 'Pic-File'
         pics.forEach((item) => {
             if (item.pic) {
-                formData.append('Pic-File', item.pic); // each image goes under 'Pic-File'
+                formData.append('Pic-File', item.pic); 
             }
-        });
+    });
     
         try {
+            
+            console.log('FormData before sending:');
+            formData.forEach((value, key) => {
+                console.log(`${key}:`, value);  // Logs key-value pairs
+            });
+
             const response = await authApi.post('/api/v1/info', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',

@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request
 from FlaskSite.forms import RegisterForm, LoginForm
 from FlaskSite.controllers import auth_controller
+from FlaskSite.constants import TokenMessages
+
+
 bp = Blueprint('auth', __name__)
 
 
