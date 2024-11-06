@@ -21,52 +21,43 @@ const InfoContainer = () => {
     const [pics, setPics] = useState([{ headline: '', pic: null, comment: '' }]);
     const [topicId, setTopicId] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const formData = new FormData();
         const searchKey = document.querySelector('#searchKey').value;
-        
-        // Append main data fields
-        formData.append('key', searchKey);
-        formData.append('topic_id', topicId);
-
-        // Append texts, links, and pics as JSON strings
+    
+        formData.append('key', searchKey); // Append search key
+        formData.append('topic_id', topicId); // Append topic ID
+    
+        // Append texts and links as JSON strings
         formData.append('texts', JSON.stringify(texts));
         formData.append('links', JSON.stringify(links));
-
-        // Append pic metadata without files (headline and comment only)
-        const picData = pics.map(({ headline, comment }) => ({ headline, comment }));
-        formData.append('files', JSON.stringify(picData));
-
-        // Append pic files with unique keys for backend processing
-        pics.forEach((item, index) => {
+    
+        // Append each image file individually with the key 'Pic-File'
+        pics.forEach((item) => {
             if (item.pic) {
-                formData.append(`Pic-File-${index}`, item.pic);
+                formData.append('Pic-File', item.pic); // each image goes under 'Pic-File'
             }
         });
-
-        // Log form data for debugging
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
-        // Send form data to API
-        authApi.post('/api/v1/info', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-        .then((response) => {
+    
+        try {
+            const response = await authApi.post('/api/v1/info', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             console.log('Info added:', response.data);
 
-            // Reset the form inputs after successful submission
+            // Reset input states after successful submission
             setTexts([{ headline: '', text: '', comment: '' }]);
             setLinks([{ headline: '', link: '', comment: '' }]);
-            setPics([{ headline: '', pic: null, comment: '' }]);
-            setTopicId('');
-        })
-        .catch((error) => {
+            setPics([{ headline: '', pic: null, comment: '' }]); // Reset pics state
+            setTopicId('');  // Reset topicId or set it to default if needed
+
+            // Optionally, reset the active input state (if required)
+            setActiveInput('text');
+        } catch (error) {
             if (error.response) {
                 console.error('Server responded with:', error.response.data);
             } else if (error.request) {
@@ -74,8 +65,9 @@ const InfoContainer = () => {
             } else {
                 console.error('Error setting up request:', error.message);
             }
-        });
+        }
     };
+    
 
     const renderInput = () => {
         switch (activeInput) {
