@@ -8,7 +8,7 @@ import authApi from '../api/authApi';
 import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
-    const [error, setError] = useState(null);
+    const [feedbackMessage, setFeedbackMessage] = useState({ message: '', success: false });
     const [activeInput, setActiveInput] = useState('text');
     const navItems = [
         { label: 'Text', value: 'text' },
@@ -35,7 +35,7 @@ const InfoContainer = () => {
         
         // Check if topicId is a valid number and not empty
         if (!topicId || isNaN(topicId)) {
-            setError("Select a valid Topic. Try again."); // Set user-friendly error message
+            setFeedbackMessage({ message: 'Failed to add topic. Please select a Valid Topic.', success: false });
             return; // Don't proceed if topicId is invalid
         }
 
@@ -73,10 +73,6 @@ const InfoContainer = () => {
             }
         });
 
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-        
 
         // Use axios request with .then() and .catch() instead of async/await
         authApi.post('/api/v1/info', formData, {
@@ -85,14 +81,16 @@ const InfoContainer = () => {
         },
     })
     .then((response) => {
-        console.log('Info added:', response.data);
+        if (response.status === 200 && response.statusText === "OK" ){
+            setFeedbackMessage({ message: 'Info created.', success: true });
+
+        }
 
         // Reset input states after submission if needed
         if (activeInput === 'text') setTexts([{ headline: '', text: '', comment: '' }]);
         if (activeInput === 'link') setLinks([{ headline: '', link: '', comment: '' }]);
         if (activeInput === 'pics') setPics([{ headline: '', pic: null, comment: '' }]);
         setTopicId('');
-        setError(null)
     })
     .catch((error) => {
         if (error.response) {
@@ -127,8 +125,10 @@ const InfoContainer = () => {
                 <InfoSearchKey setTopicId={setTopicId} />
                 <SubmitButton type="submit">Add Info</SubmitButton>
                 
-                {/* Error message display */}
-                {error && <ErrorMessage>{error}</ErrorMessage>}
+                {/* Feedback message display */}
+                {feedbackMessage.message && (
+                <Feedback $success={feedbackMessage.success}>{feedbackMessage.message}</Feedback>
+                 )}
             
             </Form>
         </Container>
@@ -164,10 +164,10 @@ const SubmitButton = styled.button`
     margin-bottom: 20px;
 `;
 
-const ErrorMessage = styled.div`
-    color: red;
-    text-align: center;
-    font-size: 14px;
-    margin-top: 5px;
+
+const Feedback = styled.p`
+    color: ${props => props.$success ? 'green' : 'red'};
+    margin-top: 8px;
 `;
+
 export default InfoContainer;
