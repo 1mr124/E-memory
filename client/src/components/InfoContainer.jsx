@@ -8,6 +8,7 @@ import authApi from '../api/authApi';
 import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
+    const [error, setError] = useState(null);
     const [activeInput, setActiveInput] = useState('text');
     const navItems = [
         { label: 'Text', value: 'text' },
@@ -31,6 +32,13 @@ const InfoContainer = () => {
         
                 
         formData.append('key', searchKey); // Append search key
+        
+        // Check if topicId is a valid number and not empty
+        if (!topicId || isNaN(topicId)) {
+            setError("Select a valid Topic. Try again."); // Set user-friendly error message
+            return; // Don't proceed if topicId is invalid
+        }
+
         formData.append('topic_id', topicId); // Append topic ID
 
          // Create arrays to hold texts, links, and pics
@@ -70,8 +78,6 @@ const InfoContainer = () => {
         }
         
 
-        const token = sessionStorage.getItem('authToken');
-
         // Use axios request with .then() and .catch() instead of async/await
         authApi.post('/api/v1/info', formData, {
             headers: {
@@ -86,6 +92,7 @@ const InfoContainer = () => {
         if (activeInput === 'link') setLinks([{ headline: '', link: '', comment: '' }]);
         if (activeInput === 'pics') setPics([{ headline: '', pic: null, comment: '' }]);
         setTopicId('');
+        setError(null)
     })
     .catch((error) => {
         if (error.response) {
@@ -119,6 +126,10 @@ const InfoContainer = () => {
                 {renderInput()}
                 <InfoSearchKey setTopicId={setTopicId} />
                 <SubmitButton type="submit">Add Info</SubmitButton>
+                
+                {/* Error message display */}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
+            
             </Form>
         </Container>
     );
@@ -153,4 +164,10 @@ const SubmitButton = styled.button`
     margin-bottom: 20px;
 `;
 
+const ErrorMessage = styled.div`
+    color: red;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+`;
 export default InfoContainer;
