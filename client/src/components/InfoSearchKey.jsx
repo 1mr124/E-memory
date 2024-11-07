@@ -2,9 +2,8 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import authApi from '../api/authApi'
 
-const InfoSearchKey = ({ setTopicId }) => {
+const InfoSearchKey = ({ topicId, setTopicId, onReset }) => {
     const [topics, setTopics] = useState([]);
-    const [selectedTopicId, setSelectedTopicId] = useState(null);
     const [error, setError] = useState(null);
 
 
@@ -13,6 +12,15 @@ const InfoSearchKey = ({ setTopicId }) => {
         // Fetch topics on component mount
         fetchTopics();
     }, []);
+
+    useEffect(() => {
+        if (!topicId) {
+            onReset(); // Trigger reset function passed from parent
+            resetSearchKey(); // Clear searchKey input
+
+        }
+
+    },[topicId, onReset])
 
     
     const fetchTopics = async () => {
@@ -38,14 +46,18 @@ const InfoSearchKey = ({ setTopicId }) => {
         const selectedTopicId = topics.find(topic => topic.title === selectedTopic);
 
         if (selectedTopicId){
-            setSelectedTopicId(selectedTopicId);
             setTopicId(selectedTopicId.id);
         } else {
-            setSelectedTopicId(null); // Clear selection if no match is found
             setTopicId(null); // Reset parent state if selection is invalid
         }
         
         
+    };
+
+    const resetSearchKey = () => {
+        document.getElementById("searchKey").value = ""; // Clear the searchKey input
+        document.getElementById("dataListInput").value = ""; // Clear the DataListInput value
+
     };
 
     return (
@@ -55,6 +67,7 @@ const InfoSearchKey = ({ setTopicId }) => {
 
             <SearchKeyInput id="searchKey" type="text" placeholder="Search Key" required />
             <DataListInput 
+                id="dataListInput" // Add id to target this input
                 list="data-options" 
                 placeholder="Topic" 
                 onChange={(e) => handleTopicChange(e)} 

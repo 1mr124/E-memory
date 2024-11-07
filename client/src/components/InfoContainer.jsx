@@ -24,6 +24,13 @@ const InfoContainer = () => {
     // Add state for topic ID
     const [topicId, setTopicId] = useState('');
 
+    const resetForm = () => {
+        setTexts([{ headline: '', text: '', comment: '' }]);
+        setLinks([{ headline: '', link: '', comment: '' }]);
+        setPics([{ headline: '', pic: null, comment: '' }]);
+        setTopicId('');
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -36,8 +43,9 @@ const InfoContainer = () => {
         // Check if topicId is a valid number and not empty
         if (!topicId || isNaN(topicId)) {
             setFeedbackMessage({ message: 'Failed to add topic. Please select a Valid Topic.', success: false });
-            return; // Don't proceed if topicId is invalid
+            return;
         }
+        
 
         formData.append('topic_id', topicId); // Append topic ID
 
@@ -83,14 +91,10 @@ const InfoContainer = () => {
     .then((response) => {
         if (response.status === 200 && response.statusText === "OK" ){
             setFeedbackMessage({ message: 'Info created.', success: true });
+            setTimeout(() => setFeedbackMessage({ message: '', success: false }), 3000); // Clear message after 3 seconds
 
         }
-
-        // Reset input states after submission if needed
-        if (activeInput === 'text') setTexts([{ headline: '', text: '', comment: '' }]);
-        if (activeInput === 'link') setLinks([{ headline: '', link: '', comment: '' }]);
-        if (activeInput === 'pics') setPics([{ headline: '', pic: null, comment: '' }]);
-        setTopicId('');
+        resetForm();
     })
     .catch((error) => {
         if (error.response) {
@@ -122,7 +126,7 @@ const InfoContainer = () => {
             <Navigation activeInput={activeInput} setActiveInput={setActiveInput} navItems={navItems} />
             <Form onSubmit={handleSubmit}>
                 {renderInput()}
-                <InfoSearchKey setTopicId={setTopicId} />
+                <InfoSearchKey topicId={topicId} setTopicId={setTopicId} onReset={() => setTopicId('')} />
                 <SubmitButton type="submit">Add Info</SubmitButton>
                 
                 {/* Feedback message display */}
