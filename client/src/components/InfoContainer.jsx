@@ -8,6 +8,7 @@ import authApi from '../api/authApi';
 import InfoSearchKey from './InfoSearchKey';
 
 const InfoContainer = () => {
+    const [feedbackMessage, setFeedbackMessage] = useState({ message: '', success: false });
     const [activeInput, setActiveInput] = useState('text');
     const navItems = [
         { label: 'Text', value: 'text' },
@@ -21,6 +22,13 @@ const InfoContainer = () => {
     const [pics, setPics] = useState([{ headline: '', pic: null, comment: '' }]);
     const [topicId, setTopicId] = useState('');
 
+    const resetForm = () => {
+        setTexts([{ headline: '', text: '', comment: '' }]);
+        setLinks([{ headline: '', link: '', comment: '' }]);
+        setPics([{ headline: '', pic: null, comment: '' }]);
+        setTopicId('');
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -28,6 +36,14 @@ const InfoContainer = () => {
         const searchKey = document.querySelector('#searchKey').value;
     
         formData.append('key', searchKey); // Append search key
+        
+        // Check if topicId is a valid number and not empty
+        if (!topicId || isNaN(topicId)) {
+            setFeedbackMessage({ message: 'Failed to add topic. Please select a Valid Topic.', success: false });
+            return;
+        }
+        
+
         formData.append('topic_id', topicId); // Append topic ID
     
         // Append texts and links as JSON strings
@@ -39,41 +55,34 @@ const InfoContainer = () => {
             if (item.pic) {
                 formData.append('Pic-File', item.pic); 
             }
+        });
+
+
+        // Use axios request with .then() and .catch() instead of async/await
+        authApi.post('/api/v1/info', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    })
+    .then((response) => {
+        if (response.status === 200 && response.statusText === "OK" ){
+            setFeedbackMessage({ message: 'Info created.', success: true });
+            setTimeout(() => setFeedbackMessage({ message: '', success: false }), 3000); // Clear message after 3 seconds
+
+        }
+        resetForm();
+    })
+    .catch((error) => {
+        if (error.response) {
+            console.error('Server responded with:', error.response.data); // Log server response
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        } else {
+            console.error('Error setting up request:', error.message);
+        }
     });
     
-        try {
-            
-            console.log('FormData before sending:');
-            formData.forEach((value, key) => {
-                console.log(`${key}:`, value);  // Logs key-value pairs
-            });
-
-            const response = await authApi.post('/api/v1/info', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log('Info added:', response.data);
-
-            // Reset input states after successful submission
-            setTexts([{ headline: '', text: '', comment: '' }]);
-            setLinks([{ headline: '', link: '', comment: '' }]);
-            setPics([{ headline: '', pic: null, comment: '' }]); // Reset pics state
-            setTopicId('');  // Reset topicId or set it to default if needed
-
-            // Optionally, reset the active input state (if required)
-            setActiveInput('text');
-        } catch (error) {
-            if (error.response) {
-                console.error('Server responded with:', error.response.data);
-            } else if (error.request) {
-                console.error('No response received:', error.request);
-            } else {
-                console.error('Error setting up request:', error.message);
-            }
-        }
-    };
-    
+};
 
     const renderInput = () => {
         switch (activeInput) {
@@ -93,8 +102,14 @@ const InfoContainer = () => {
             <Navigation activeInput={activeInput} setActiveInput={setActiveInput} navItems={navItems} />
             <Form onSubmit={handleSubmit}>
                 {renderInput()}
-                <InfoSearchKey setTopicId={setTopicId} />
+                <InfoSearchKey topicId={topicId} setTopicId={setTopicId} onReset={() => setTopicId('')} />
                 <SubmitButton type="submit">Add Info</SubmitButton>
+                
+                {/* Feedback message display */}
+                {feedbackMessage.message && (
+                <Feedback $success={feedbackMessage.success}>{feedbackMessage.message}</Feedback>
+                 )}
+            
             </Form>
         </Container>
     );
@@ -127,6 +142,12 @@ const SubmitButton = styled.button`
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 20px;
+`;
+
+
+const Feedback = styled.p`
+    color: ${props => props.$success ? 'green' : 'red'};
+    margin-top: 8px;
 `;
 
 export default InfoContainer;
