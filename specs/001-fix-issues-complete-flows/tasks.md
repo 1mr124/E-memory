@@ -176,9 +176,9 @@
 
 **Purpose**: Final validation across all stories
 
-- [ ] T029 Run pylint on backend: `pylint . --enable=W --disable=C0103` — fix any regressions to maintain CI score
-- [ ] T030 Run frontend tests: `cd client && npm test` — verify no regressions
-- [ ] T031 Run quickstart.md manual validation — walk through all 8 test steps in quickstart.md to verify end-to-end flows
+- [X] T029 Run pylint on backend: `pylint . --enable=W --disable=C0103` — fix any regressions to maintain CI score
+- [X] T030 Run frontend tests: `cd client && npm test` — verify no regressions
+- [X] T031 Run quickstart.md manual validation — walk through all 8 test steps in quickstart.md to verify end-to-end flows
 
 ---
 
