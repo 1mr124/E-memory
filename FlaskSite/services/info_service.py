@@ -3,13 +3,16 @@ from flask import request, current_app
 from FlaskSite.models import db, Text, Link, Pic, Info
 from FlaskSite.utils import file_utils
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_info(user_id, search_key, topic_id):
     info = Info(user_id=user_id, key=search_key, topic_id=topic_id)
     db.session.add(info)
     db.session.commit()
-    print("info created")
+    logger.debug("info created")
 
 
 def get_info_id(user_id, search_key, topic_id, create_if_missing=False):
@@ -61,8 +64,7 @@ def prepare_pics(files):
         for file in files:
             if file and allowed_file(file.filename):
                 filename = str(uuid.uuid4()) + file.filename.split(".")[1]
-                file_utils.save_file(
-                    current_app.config["IMG_FOLDER"], filename, file)
+                file_utils.save_file(current_app.config["IMG_FOLDER"], filename, file)
                 item = {
                     "path": filename,
                     "header": request.form.get("headline"),
@@ -72,7 +74,7 @@ def prepare_pics(files):
 
         return items
     except Exception as e:
-        print(f"Error storing picture: {e}")
+        logger.error(f"Error storing picture: {e}")
         return items
 
 
@@ -92,13 +94,55 @@ def store_items(items, db_model_class, info_id):
         db.session.commit()
         return True
     except Exception as e:
-        print(f"failed to store items {items} due to {e} rolling back")
+        logger.error(f"failed to store items {items} due to {e} rolling back")
         db.session.rollback()
         return False
 
 
 def get_info(search_key, user_id):
     return Info.query.filter(
-        Info.key.ilike(f"%{search_key}%"),
-        Info.user_id == user_id
+        Info.key.ilike(f"%{search_key}%"), Info.user_id == user_id
     ).all()
+
+
+def get_info_by_id(info_id, user_id):
+    return Info.query.filter_by(id=info_id, user_id=user_id).first()
+
+
+def update_info(info_id, user_id, key=None, texts=None, links=None, files=None):
+    info = get_info_by_id(info_id, user_id)
+    if info is None:
+        return None
+
+    if key is not None:
+        info.key = key
+
+    if texts is not None or links is not None or files is not None:
+        Text.query.filter_by(info_id=info_id).delete()
+        Link.query.filter_by(info_id=info_id).delete()
+        Pic.query.filter_by(info_id=info_id).delete()
+
+        if texts:
+            texts_to_add = prepare_texts(texts)
+            store_items(texts_to_add, Text, info_id)
+        if links:
+            links_to_add = prepare_links(links)
+            store_items(links_to_add, Link, info_id)
+        if files:
+            pics_to_add = prepare_pics(files)
+            store_items(pics_to_add, Pic, info_id)
+
+    db.session.commit()
+    logger.debug(f"Updated info {info_id} for user {user_id}")
+    return info
+
+
+def delete_info(info_id, user_id):
+    info = get_info_by_id(info_id, user_id)
+    if info is None:
+        return False
+
+    db.session.delete(info)
+    db.session.commit()
+    logger.debug(f"Deleted info {info_id} for user {user_id}")
+    return True

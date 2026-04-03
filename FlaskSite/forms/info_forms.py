@@ -36,5 +36,5 @@ class InfoF(FlaskForm):
 
 
 class NewTopic(FlaskForm):
-    Name = StringField("TopicName", validators=[Length(max=40)])
+    Name = StringField("TopicName", validators=[Length(max=40), DataRequired()])
     Submit = SubmitField()

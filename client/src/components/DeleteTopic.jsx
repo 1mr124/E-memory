@@ -1,28 +1,41 @@
 // src/components/DeleteTopic/DeleteTopic.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import authApi from '../api/authApi';
 
 const DeleteTopic = ({ topics, setTopics }) => {
     const [titleToDelete, setTitleToDelete] = useState('');
+    const [error, setError] = useState('');
 
-    const handleDeleteTopic = (e) => {
+    const handleDeleteTopic = async (e) => {
         e.preventDefault();
+        setError('');
+        
         if (titleToDelete.trim() === '') {
-            alert('Please enter a topic title to delete.');
+            setError('Please enter a topic title to delete.');
             return;
         }
-        const topicExists = topics.some(topic => topic.title === titleToDelete);
-        if (!topicExists) {
-            alert('Topic not found.');
+        const topic = topics.find(t => t.title === titleToDelete);
+        if (!topic) {
+            setError('Topic not found.');
             return;
         }
-        setTopics(topics.filter(topic => topic.title !== titleToDelete));
-        setTitleToDelete('');
-        console.log('Deleted Topic:', titleToDelete);
+        
+        try {
+            const response = await authApi.post('/api/v1/delete', { topic_id: topic.id });
+            if (response.status === 200) {
+                setTopics(topics.filter(t => t.id !== topic.id));
+                setTitleToDelete('');
+            }
+        } catch (err) {
+            const message = err.response?.data?.message || 'Failed to delete topic';
+            setError(message);
+        }
     };
 
     return (
         <Form onSubmit={handleDeleteTopic}>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
             <Input
                 type="text"
                 placeholder="Topic to delete"
@@ -34,6 +47,14 @@ const DeleteTopic = ({ topics, setTopics }) => {
         </Form>
     );
 };
+
+const ErrorMessage = styled.div`
+    color: #ff6b6b;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 107, 107, 0.1);
+    border-radius: 5px;
+`;
 
 // Styled Components
 const Form = styled.form`
