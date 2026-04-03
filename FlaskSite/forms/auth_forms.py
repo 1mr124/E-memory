@@ -4,6 +4,9 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 
 class LoginForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     userName = StringField(
         "Name", validators=[
             DataRequired(), Length(
@@ -14,6 +17,10 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    # by passing Meta class with csrf = False, we disable CSRF protection for this form
+    class Meta:
+        csrf = False
+
     userName = StringField(
         "Name", validators=[
             DataRequired(), Length(
