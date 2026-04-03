@@ -172,6 +172,8 @@ specs/
 .specify/
 .kilocode/
 .claude/
+CLAUDE.md
+FEATURES.md
 
 # Test specification files
 *.spec.js
