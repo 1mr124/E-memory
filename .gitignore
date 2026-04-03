@@ -167,6 +167,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Project specification files
+specs/
+
 # Test specification files
 *.spec.js
 *.spec.ts
