@@ -163,10 +163,10 @@
 
 ### Implementation for User Story 8
 
-- [ ] T025 [P] [US8] Remove all print() statements from FlaskSite/controllers/info_controller.py (lines 10-14, 24, 40, 44) — replace with logging.debug() or logging.info() calls using the app logger
-- [ ] T026 [P] [US8] Remove all print() statements from FlaskSite/controllers/topic_controller.py (lines 8, 28, 36) — replace with logging.debug() calls
-- [ ] T027 [P] [US8] Remove print() statement from FlaskSite/api/v1/search.py (line 22) — replace with logging.debug() call
-- [ ] T028 [US8] Audit all controller return statements across FlaskSite/controllers/ — verify no failure path returns status 200, fix any remaining instances
+- [X] T025 [P] [US8] Remove all print() statements from FlaskSite/controllers/info_controller.py (lines 10-14, 24, 40, 44) — replace with logging.debug() or logging.info() calls using the app logger
+- [X] T026 [P] [US8] Remove all print() statements from FlaskSite/controllers/topic_controller.py (lines 8, 28, 36) — replace with logging.debug() calls
+- [X] T027 [P] [US8] Remove print() statement from FlaskSite/api/v1/search.py (line 22) — replace with logging.debug() call
+- [X] T028 [US8] Audit all controller return statements across FlaskSite/controllers/ — verify no failure path returns status 200, fix any remaining instances
 
 **Checkpoint**: No debug output in production, all error codes are correct
 
