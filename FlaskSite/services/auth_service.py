@@ -1,17 +1,20 @@
 from FlaskSite.models import User, db
 from FlaskSite.utils.jwt_helper import generate_token, generate_refresh_token, decode_jwt_token
 import datetime
+import logging
 from FlaskSite.constants import TokenMessages
+
+logger = logging.getLogger(__name__)
 
 
 def register(user: User):
     try:
-        print(user)
+        logger.debug(f"Registering user: {user.username}")
         db.session.add(user)
         db.session.commit()
         return True
     except Exception as e:
-        print(f"exception during registration of user: {e}")
+        logger.error(f"exception during registration of user: {e}")
         db.session.rollback()
         return False
 

@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, request, abort
+import logging
 from FlaskSite.controllers import info_controller
 from flask_jwt_extended import get_jwt_identity,jwt_required
 
+logger = logging.getLogger(__name__)
 bp = Blueprint('search', __name__)
 
 
@@ -19,7 +21,7 @@ def search():
     # Call the controller to get the result
     try:
         result = info_controller.get_info(search_key, user_id)
-        print(result)  # Consider removing this in production
+        logger.debug(f"search endpoint found {len(result)} results for search_key={search_key}")
 
         return jsonify(result), 200  # Return the result (empty list if no results found)
         

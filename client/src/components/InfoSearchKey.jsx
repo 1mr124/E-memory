@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import authApi from '../api/authApi';
 
 const SearchWrapper = styled.div`
     display: flex;
@@ -33,6 +34,20 @@ const DataListInput = styled.input`
 `;
 
 const InfoSearchKey = ({ setTopicId }) => {
+    const [topics, setTopics] = useState([]);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const response = await authApi.get('/api/v1/topic/all');
+                setTopics(response.data.topics || []);
+            } catch (error) {
+                console.error('Failed to fetch topics:', error);
+            }
+        };
+        fetchTopics();
+    }, []);
+
     return (
         <SearchWrapper>
             <SearchKeyInput id="searchKey" type="text" placeholder="Search Key" required />
@@ -43,9 +58,9 @@ const InfoSearchKey = ({ setTopicId }) => {
                 required 
             />
             <datalist id="data-options">
-                <option value="Option 1" />
-                <option value="Option 2" />
-                <option value="Option 3" />
+                {topics.map(topic => (
+                    <option key={topic.id} value={topic.id} label={topic.title} />
+                ))}
             </datalist>
         </SearchWrapper>
     );

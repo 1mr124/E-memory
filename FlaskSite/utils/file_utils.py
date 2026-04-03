@@ -1,5 +1,8 @@
 import os
+import logging
 from flask import current_app
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -22,7 +25,7 @@ def save_file(file_dir, file, filename):
         file.save(file_path)
         return True  # Indicate success
     except Exception as e:
-        print(f"Error saving file {filename}: {e}")
+        logger.error(f"Error saving file {filename}: {e}")
         return False  # Indicate failure
 
 def remove_file(file_dir, filename):
@@ -31,10 +34,10 @@ def remove_file(file_dir, filename):
         os.remove(file_path)
         return True
     except FileNotFoundError:
-        print(f"File {filename} not found in {file_dir}.")
+        logger.warning(f"File {filename} not found in {file_dir}.")
         return False
     except Exception as e:
-        print(f"Unable to remove file {filename} in directory {file_dir} due to {e}")
+        logger.error(f"Unable to remove file {filename} in directory {file_dir} due to {e}")
         return False
     
 
@@ -52,10 +55,10 @@ def createNewFolder(folderPath):
     try:
         if not fileExists(folderPath):
             os.makedirs(folderPath, exist_ok=True)
-            print(f"Folder created at {folderPath}")
+            logger.debug(f"Folder created at {folderPath}")
             return True  # Folder created successfully
     except OSError as e:
-        print(f"Error creating folder {folderPath}: {e}")
+        logger.error(f"Error creating folder {folderPath}: {e}")
         return False  # Indicate failure
 
 
@@ -79,7 +82,7 @@ def createNewEmptyFile(filePath):
         else:
             return False  # File already exists; so it has content, not empty
     except OSError as e:
-        print(f"Error creating file {filePath}: {e}")
+        logger.error(f"Error creating file {filePath}: {e}")
         return False  # Indicate failure due to an exception
     
 
@@ -108,7 +111,7 @@ def writeToFile(filePath, content):
         creationResult = createNewEmptyFile(filePath)
         if not creationResult:
             # Handle the case where the file couldn't be created
-            print(f"Error: Unable to create the file at {filePath}.")
+            logger.error(f"Unable to create the file at {filePath}.")
             return False  # Stop further execution if file creation fails
 
     # Append content to the file
@@ -117,7 +120,7 @@ def writeToFile(filePath, content):
             f.write(content)
         return True  # Successfully wrote content
     except OSError as e:
-        print(f"Error writing to file {filePath}: {e}")
+        logger.error(f"Error writing to file {filePath}: {e}")
         return False  # Indicate failure
     
 

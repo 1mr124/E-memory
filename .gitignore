@@ -166,3 +166,33 @@ client/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Project specification and tool directories
+specs/
+.specify/
+.kilocode/
+.claude/
+CLAUDE.md
+FEATURES.md
+
+# Test specification files
+*.spec.js
+*.spec.ts
+*.spec.tsx
+*.spec.jsx
+
+# AI/ML model files
+*.model
+*.weights
+*.h5
+*.pb
+*.pkl
+*.pickle
+*.joblib
+*.onnx
+*.pth
+*.pt
+*.keras
+*.tflite
+models/
+__pycache__/models/

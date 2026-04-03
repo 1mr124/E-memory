@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { FaUpload, FaTrashAlt } from 'react-icons/fa';
 
@@ -144,6 +144,13 @@ const UploadIcon = styled(FaUpload)`
 
 const Pic = ({ pics, setPics }) => {
     const [visibleIndex, setVisibleIndex] = useState(0);
+    const fileInputRefs = useRef([]);
+
+    const handleFileChange = (index, file) => {
+        const newPics = [...pics];
+        newPics[index].pic = file;
+        setPics(newPics);
+    };
 
     const handleChange = (index, field, value) => {
         const newPics = [...pics];
@@ -153,7 +160,7 @@ const Pic = ({ pics, setPics }) => {
 
     const addPic = (e) => {
         e.preventDefault(); // Prevent page reload
-        setPics([...pics, { headline: '', comment: '', image: null }]);
+        setPics([...pics, { headline: '', comment: '', pic: null }]);
         setVisibleIndex(pics.length); // Show the new input
     };
 
@@ -197,10 +204,17 @@ const Pic = ({ pics, setPics }) => {
                                 onChange={(e) => handleChange(index, 'headline', e.target.value)}
                                 placeholder="Headline"
                             />
-                            <UploadContainer onClick={() => alert('Upload an image')}>
+                            <UploadContainer onClick={() => fileInputRefs.current[index]?.click()}>
                             <UploadIcon size={40} />
-                            <UploadText>Upload Image</UploadText>
+                            <UploadText>{pic.pic ? pic.pic.name : 'Upload Image'}</UploadText>
                             </UploadContainer>
+                            <input
+                                type="file"
+                                ref={el => fileInputRefs.current[index] = el}
+                                style={{ display: 'none' }}
+                                accept="image/*"
+                                onChange={(e) => handleFileChange(index, e.target.files[0])}
+                            />
                             <Comment
                                 value={pic.comment}
                                 onChange={(e) => handleChange(index, 'comment', e.target.value)}
