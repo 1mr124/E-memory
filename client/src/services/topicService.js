@@ -30,6 +30,34 @@ const topicService = {
       throw error;
     }
   },
+
+  /**
+   * Get children (subtopics and infos) of a topic.
+   * @param {number} topicId - The ID of the parent topic
+   */
+  getTopicChildren: async (topicId) => {
+    try {
+      const response = await authApi.get(`/api/v1/topic/${topicId}/children`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get topic children:', error.response?.data || error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get the breadcrumb path for a topic.
+   * @param {number} topicId - The ID of the topic
+   */
+  getBreadcrumb: async (topicId) => {
+    try {
+      const response = await authApi.get(`/api/v1/topic/${topicId}/breadcrumb`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get breadcrumb:', error.response?.data || error);
+      throw error;
+    }
+  },
 };
 
 export default topicService;

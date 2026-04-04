@@ -10,6 +10,8 @@ from FlaskSite.services.topic_service import (
     get_root_topics as get_root_topics_service,
     move_topic as move_topic_service,
     has_children,
+    get_children as get_children_service,
+    get_breadcrumb_path,
 )
 
 logger = logging.getLogger(__name__)
@@ -73,10 +75,10 @@ def get_all_topics(user_id):
         return jsonify({"error": "failed to get topics"}), 500
 
 
-def delete_topic(user_id, topic_id):
+def delete_topic(user_id, topic_id, delete_mode="cascade"):
     try:
-        logger.debug(f"delete topic {topic_id} for user {user_id}")
-        result = delete_topic_service(user_id, topic_id)
+        logger.debug(f"delete topic {topic_id} for user {user_id} with mode {delete_mode}")
+        result = delete_topic_service(user_id, topic_id, delete_mode)
         if result is None:
             return jsonify({"message": "Topic not found"}), 404
         return jsonify({"message": "Topic deleted successfully"}), 200
@@ -115,3 +117,55 @@ def move_topic(user_id, topic_id, new_parent_id):
     except Exception as e:
         logger.error(f"exception during move topic: {e}")
         return jsonify({"error": "failed to move topic"}), 500
+
+
+def get_topic_children(user_id, topic_id):
+    """Get children (subtopics and infos) for a topic with breadcrumb."""
+    try:
+        logger.debug(f"get children for topic {topic_id} for user {user_id}")
+        topic = get_topic(user_id, topic_id)
+        if topic is None:
+            return jsonify({"error": "Topic not found"}), 404
+
+        children = get_children_service(user_id, topic_id)
+        if children is None:
+            return jsonify({"error": "Topic not found"}), 404
+
+        breadcrumb = get_breadcrumb_path(user_id, topic_id)
+
+        subtopics_list = [
+            {"id": st.id, "name": st.name, "has_children": has_children(st)}
+            for st in children["subtopics"]
+        ]
+
+        infos_list = [
+            {"id": info.id, "key": info.key}
+            for info in children["infos"]
+        ]
+
+        response = {
+            "topic": {"id": topic.id, "name": topic.name},
+            "breadcrumb": breadcrumb,
+            "subtopics": subtopics_list,
+            "infos": infos_list
+        }
+
+        return jsonify(response), 200
+    except Exception as e:
+        logger.error(f"exception during get topic children: {e}")
+        return jsonify({"error": "failed to get topic children"}), 500
+
+
+def get_breadcrumb(user_id, topic_id):
+    """Get breadcrumb path for a topic."""
+    try:
+        logger.debug(f"get breadcrumb for topic {topic_id} for user {user_id}")
+        topic = get_topic(user_id, topic_id)
+        if topic is None:
+            return jsonify({"error": "Topic not found"}), 404
+
+        breadcrumb = get_breadcrumb_path(user_id, topic_id)
+        return jsonify({"breadcrumb": breadcrumb}), 200
+    except Exception as e:
+        logger.error(f"exception during get breadcrumb: {e}")
+        return jsonify({"error": "failed to get breadcrumb"}), 500

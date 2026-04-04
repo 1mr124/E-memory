@@ -7,6 +7,8 @@ from FlaskSite.controllers.topic_controller import (
     delete_topic as delete_topic_controller,
     get_root_topics as get_root_topics_controller,
     move_topic as move_topic_controller,
+    get_topic_children as get_topic_children_controller,
+    get_breadcrumb as get_breadcrumb_controller,
 )
 from FlaskSite.forms import NewTopic
 from FlaskSite.models import db, Topic, SearchKey, Info
@@ -38,8 +40,10 @@ def get_topics():
 @jwt_required()
 def delete_topic():
     user_id = get_jwt_identity()
-    topic_id = request.json.get("topic_id")
-    return delete_topic_controller(user_id=user_id, topic_id=topic_id)
+    json_data = request.get_json()
+    topic_id = json_data.get("topic_id")
+    delete_mode = json_data.get("delete_mode", "cascade")
+    return delete_topic_controller(user_id=user_id, topic_id=topic_id, delete_mode=delete_mode)
 
 
 @bp.route("/search", methods=["POST"])
@@ -77,6 +81,22 @@ def move_topic(topic_id):
     new_parent_id = json_data.get("new_parent_id")
 
     return move_topic_controller(user_id=user_id, topic_id=topic_id, new_parent_id=new_parent_id)
+
+
+@bp.route("/topic/<int:topic_id>/children", methods=["GET"])
+@jwt_required()
+def get_topic_children(topic_id):
+    """Get children (subtopics and infos) for a topic."""
+    user_id = get_jwt_identity()
+    return get_topic_children_controller(user_id=user_id, topic_id=topic_id)
+
+
+@bp.route("/topic/<int:topic_id>/breadcrumb", methods=["GET"])
+@jwt_required()
+def get_breadcrumb(topic_id):
+    """Get breadcrumb path for a topic."""
+    user_id = get_jwt_identity()
+    return get_breadcrumb_controller(user_id=user_id, topic_id=topic_id)
 
 
 def format_text(text):

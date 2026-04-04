@@ -26,12 +26,79 @@ def get_topic_by_name(user_id, topic_name):
     )
 
 
-def delete_topic(user_id, topic_id):
+def delete_topic(user_id, topic_id, delete_mode="cascade"):
+    """Delete a topic with choice of cascade or promote children.
+
+    Args:
+        user_id: The ID of the user
+        topic_id: The ID of the topic to delete
+        delete_mode: "cascade" or "promote"
+
+    Returns:
+        True if successful, None if topic not found.
+    """
     topic = (
         db.session.query(Topic).filter_by(id=topic_id, user_id=user_id).one_or_none()
     )
     if topic is None:
         return None
+
+    if delete_mode == "promote":
+        return delete_topic_promote(user_id, topic_id)
+    else:
+        return delete_topic_cascade(user_id, topic_id)
+
+
+def delete_topic_promote(user_id, topic_id):
+    """Delete a topic and promote its children to the parent level.
+
+    Args:
+        user_id: The ID of the user
+        topic_id: The ID of the topic to delete
+
+    Returns:
+        True if successful, None if topic not found.
+    """
+    topic = (
+        db.session.query(Topic).filter_by(id=topic_id, user_id=user_id).one_or_none()
+    )
+    if topic is None:
+        return None
+
+    parent_id = topic.parent_topic_id
+
+    db.session.query(Topic).filter_by(
+        parent_topic_id=topic_id, user_id=user_id
+    ).update({Topic.parent_topic_id: parent_id})
+
+    db.session.delete(topic)
+    db.session.commit()
+    return True
+
+
+def delete_topic_cascade(user_id, topic_id):
+    """Delete a topic and all its descendants recursively.
+
+    Args:
+        user_id: The ID of the user
+        topic_id: The ID of the topic to delete
+
+    Returns:
+        True if successful, None if topic not found.
+    """
+    topic = (
+        db.session.query(Topic).filter_by(id=topic_id, user_id=user_id).one_or_none()
+    )
+    if topic is None:
+        return None
+
+    children = db.session.query(Topic).filter_by(
+        parent_topic_id=topic_id, user_id=user_id
+    ).all()
+
+    for child in children:
+        delete_topic_cascade(user_id, child.id)
+
     db.session.delete(topic)
     db.session.commit()
     return True
@@ -150,3 +217,32 @@ def move_topic(user_id, topic_id, new_parent_id):
     topic.parent_topic_id = new_parent_id
     db.session.commit()
     return {"success": True, "message": "Topic moved successfully"}
+
+
+def get_children(user_id, topic_id):
+    """Get child topics and child info entries for a parent topic.
+
+    Args:
+        user_id: The ID of the user
+        topic_id: The ID of the parent topic
+
+    Returns:
+        A dict with 'subtopics' (list of Topic dicts) and 'infos' (list of Info dicts),
+        or None if the topic is not found or doesn't belong to the user.
+    """
+    topic = get_topic(user_id, topic_id)
+    if topic is None:
+        return None
+
+    subtopics = db.session.query(Topic).filter_by(
+        parent_topic_id=topic_id, user_id=user_id
+    ).order_by(Topic.name).all()
+
+    infos = db.session.query(Info).filter_by(
+        topic_id=topic_id, user_id=user_id
+    ).order_by(Info.key).all()
+
+    return {
+        "subtopics": subtopics,
+        "infos": infos
+    }
