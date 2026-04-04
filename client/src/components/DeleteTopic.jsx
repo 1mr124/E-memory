@@ -19,8 +19,10 @@ const DeleteTopic = ({ topics, setTopics }) => {
             setError('Please enter a topic title to delete.');
             return;
         }
-        const topic = topics.find(t => t.title === titleToDelete);
+        const topic = topics.find(t => (t.title || t.name).trim() === titleToDelete.trim());
         if (!topic) {
+            console.log('Available topics:', topics);
+            console.log('Looking for:', titleToDelete);
             setError('Topic not found.');
             return;
         }

@@ -73,7 +73,7 @@ const AddTopicForm = () => {
             >
                 <option value="">None (Root)</option>
                 {topics.map((topic) => (
-                    <option key={topic.id} value={topic.title}>
+                    <option key={topic.id} value={topic.id}>
                         {topic.title}
                     </option>
                 ))}
