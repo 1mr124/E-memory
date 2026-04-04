@@ -26,28 +26,36 @@ const TopicsContainer = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        const fetchRootTopics = async () => {
-            try {
-                const response = await topicService.getRootTopics();
-                setRootTopics(response.topics || []);
-            } catch (error) {
-                console.error('Failed to fetch root topics:', error);
-            }
-        };
-        fetchRootTopics();
-    }, []);
+        if (activeInput === 'browse') {
+            const fetchRootTopics = async () => {
+                try {
+                    const response = await topicService.getRootTopics();
+                    setRootTopics(response.topics || []);
+                } catch (error) {
+                    console.error('Failed to fetch root topics:', error);
+                }
+            };
+            fetchRootTopics();
+        }
+    }, [activeInput]);
 
     useEffect(() => {
-        const fetchTopics = async () => {
-            try {
-                const response = await authApi.get('/api/v1/topic/all');
-                setTopics(response.data.topics || []);
-            } catch (error) {
-                console.error('Failed to fetch topics:', error);
-            }
-        };
-        fetchTopics();
-    }, []);
+        if (activeInput === 'browse' || activeInput === 'delete') {
+            const fetchTopics = async () => {
+                try {
+                    const response = await authApi.get('/api/v1/topic/all');
+                    setTopics(response.data.topics || []);
+                } catch (error) {
+                    console.error('Failed to fetch topics:', error);
+                }
+            };
+            fetchTopics();
+        }
+    }, [activeInput]);
+
+    useEffect(() => {
+        setCurrentTopicId(id ? parseInt(id) : null);
+    }, [id]);
 
     const filteredTopics = topics.filter(topic =>
         topic.title.toLowerCase().includes(searchTerm.toLowerCase())

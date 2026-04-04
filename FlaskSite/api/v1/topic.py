@@ -43,7 +43,9 @@ def delete_topic():
     json_data = request.get_json()
     topic_id = json_data.get("topic_id")
     delete_mode = json_data.get("delete_mode", "cascade")
-    return delete_topic_controller(user_id=user_id, topic_id=topic_id, delete_mode=delete_mode)
+    return delete_topic_controller(
+        user_id=user_id, topic_id=topic_id, delete_mode=delete_mode
+    )
 
 
 @bp.route("/search", methods=["POST"])
@@ -80,7 +82,9 @@ def move_topic(topic_id):
     json_data = request.get_json()
     new_parent_id = json_data.get("new_parent_id")
 
-    return move_topic_controller(user_id=user_id, topic_id=topic_id, new_parent_id=new_parent_id)
+    return move_topic_controller(
+        user_id=user_id, topic_id=topic_id, new_parent_id=new_parent_id
+    )
 
 
 @bp.route("/topic/<int:topic_id>/children", methods=["GET"])
@@ -100,7 +104,9 @@ def get_breadcrumb(topic_id):
 
 
 def format_text(text):
-    text = text.strip()
+    if text is None:
+        return None
+    text = str(text).strip()
     if text == "":
         text = None
     return text

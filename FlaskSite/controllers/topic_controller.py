@@ -47,14 +47,19 @@ def add_new_topic(user_id, title, parent_id):
             logger.debug(f"title {title} already exists")
             return jsonify({"error": "Title already exists"}), 400
 
-        if parent_id is not None and get_topic(user_id, parent_id) is None:
-            logger.debug(f"parent {parent_id} for user_id {user_id} does not exist")
-            return jsonify({"error": "parent topic does not exist"}), 400
+        if parent_id is not None:
+            try:
+                parent_id = int(parent_id)
+            except (ValueError, TypeError):
+                logger.debug(f"invalid parent_id: {parent_id}")
+                return jsonify({"error": "Invalid parent topic ID"}), 400
+            if get_topic(user_id, parent_id) is None:
+                logger.debug(f"parent {parent_id} for user_id {user_id} does not exist")
+                return jsonify({"error": "parent topic does not exist"}), 400
+            if check_circular_reference(user_id, None, parent_id):
+                return jsonify({"error": "Circular reference detected"}), 400
 
-        if check_circular_reference(user_id, None, parent_id):
-            return jsonify({"error": "Circular reference detected"}), 400
-
-        add_topic(user_id, title, parent_id)
+        add_topic(user_id, title, int(parent_id) if parent_id is not None else None)
         topic = get_topic_by_name(user_id, title)
         logger.debug(f"topic {topic} added")
         return jsonify({"message": "topic created"}), 201
@@ -77,7 +82,9 @@ def get_all_topics(user_id):
 
 def delete_topic(user_id, topic_id, delete_mode="cascade"):
     try:
-        logger.debug(f"delete topic {topic_id} for user {user_id} with mode {delete_mode}")
+        logger.debug(
+            f"delete topic {topic_id} for user {user_id} with mode {delete_mode}"
+        )
         result = delete_topic_service(user_id, topic_id, delete_mode)
         if result is None:
             return jsonify({"message": "Topic not found"}), 404
@@ -105,7 +112,9 @@ def get_root_topics(user_id):
 def move_topic(user_id, topic_id, new_parent_id):
     """Move a topic to a new parent with validation."""
     try:
-        logger.debug(f"move topic {topic_id} to parent {new_parent_id} for user {user_id}")
+        logger.debug(
+            f"move topic {topic_id} to parent {new_parent_id} for user {user_id}"
+        )
         result = move_topic_service(user_id, topic_id, new_parent_id)
 
         if not result["success"]:
@@ -138,16 +147,13 @@ def get_topic_children(user_id, topic_id):
             for st in children["subtopics"]
         ]
 
-        infos_list = [
-            {"id": info.id, "key": info.key}
-            for info in children["infos"]
-        ]
+        infos_list = [{"id": info.id, "key": info.key} for info in children["infos"]]
 
         response = {
             "topic": {"id": topic.id, "name": topic.name},
             "breadcrumb": breadcrumb,
             "subtopics": subtopics_list,
-            "infos": infos_list
+            "infos": infos_list,
         }
 
         return jsonify(response), 200

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import topicService from '../services/topicService';
 import authApi from '../api/authApi';
 import Breadcrumb from './Breadcrumb';
 
 const TopicTreeView = ({ topicId, onNavigate }) => {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,8 +22,12 @@ const TopicTreeView = ({ topicId, onNavigate }) => {
         const result = await topicService.getTopicChildren(topicId);
         setData(result);
       } catch (err) {
-        setError('Failed to load topic children');
-        console.error(err);
+        if (err.response?.status === 404) {
+          navigate('/topics');
+        } else {
+          setError('Failed to load topic children');
+          console.error(err);
+        }
       } finally {
         setLoading(false);
       }
@@ -30,7 +36,7 @@ const TopicTreeView = ({ topicId, onNavigate }) => {
     if (topicId) {
       fetchChildren();
     }
-  }, [topicId]);
+  }, [topicId, navigate]);
 
   const handleCreateSubtopic = async (e) => {
     e.preventDefault();
