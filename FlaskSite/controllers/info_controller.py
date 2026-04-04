@@ -1,4 +1,5 @@
 from flask import jsonify
+from werkzeug.datastructures import FileStorage
 import logging
 
 from FlaskSite.services import info_service
@@ -117,6 +118,14 @@ def delete_info(info_id, user_id):
 
 
 def cleanup_list(input_list):
+    logger.debug(f"cleanup_list called with {len(input_list) if input_list else 0} items")
+    logger.debug(f"Original input_list: {input_list}")
+
+    # Check if input_list contains FileStorage objects (file uploads)
+    if input_list and isinstance(input_list[0], FileStorage):
+        # File uploads don't need deduplication, return as-is
+        return input_list
+
     input_list = get_unique_list_of_dictionaries(input_list)
     input_list = remove_incomplete_input(input_list)
     return input_list
