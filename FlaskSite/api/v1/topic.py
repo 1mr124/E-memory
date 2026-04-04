@@ -5,6 +5,8 @@ from FlaskSite.controllers.topic_controller import (
     add_new_topic,
     get_all_topics,
     delete_topic as delete_topic_controller,
+    get_root_topics as get_root_topics_controller,
+    move_topic as move_topic_controller,
 )
 from FlaskSite.forms import NewTopic
 from FlaskSite.models import db, Topic, SearchKey, Info
@@ -56,6 +58,25 @@ def search_topic():
         return jsonify({"info": info_list, "search_keys": search_keys}), 200
     else:
         return jsonify({"message": "Topic not found"}), 404
+
+
+@bp.route("/topic/roots", methods=["GET"])
+@jwt_required()
+def get_root_topics():
+    """Get all root topics for the current user."""
+    user_id = get_jwt_identity()
+    return get_root_topics_controller(user_id=user_id)
+
+
+@bp.route("/topic/<int:topic_id>/move", methods=["PUT"])
+@jwt_required()
+def move_topic(topic_id):
+    """Move a topic to a new parent."""
+    user_id = get_jwt_identity()
+    json_data = request.get_json()
+    new_parent_id = json_data.get("new_parent_id")
+
+    return move_topic_controller(user_id=user_id, topic_id=topic_id, new_parent_id=new_parent_id)
 
 
 def format_text(text):

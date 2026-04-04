@@ -7,6 +7,9 @@ from FlaskSite.services.topic_service import (
     get_topic_by_name,
     get_topics,
     delete_topic as delete_topic_service,
+    get_root_topics as get_root_topics_service,
+    move_topic as move_topic_service,
+    has_children,
 )
 
 logger = logging.getLogger(__name__)
@@ -80,3 +83,35 @@ def delete_topic(user_id, topic_id):
     except Exception as e:
         logger.error(f"exception during delete topic: {e}")
         return jsonify({"error": "failed to delete topic"}), 500
+
+
+def get_root_topics(user_id):
+    """Get all root topics for a user, with has_children flag."""
+    try:
+        logger.debug(f"get root topics for user: {user_id}")
+        root_topics = get_root_topics_service(user_id)
+        topics_list = [
+            {"id": topic.id, "name": topic.name, "has_children": has_children(topic)}
+            for topic in root_topics
+        ]
+        return jsonify({"topics": topics_list}), 200
+    except Exception as e:
+        logger.error(f"exception during get root topics: {e}")
+        return jsonify({"error": "failed to get root topics"}), 500
+
+
+def move_topic(user_id, topic_id, new_parent_id):
+    """Move a topic to a new parent with validation."""
+    try:
+        logger.debug(f"move topic {topic_id} to parent {new_parent_id} for user {user_id}")
+        result = move_topic_service(user_id, topic_id, new_parent_id)
+
+        if not result["success"]:
+            if "Circular reference" in result.get("error", ""):
+                return jsonify({"error": result["error"]}), 400
+            return jsonify({"error": result["error"]}), 404
+
+        return jsonify({"message": result["message"]}), 200
+    except Exception as e:
+        logger.error(f"exception during move topic: {e}")
+        return jsonify({"error": "failed to move topic"}), 500
