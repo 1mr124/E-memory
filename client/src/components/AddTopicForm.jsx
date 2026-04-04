@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import authApi from '../api/authApi';
 
 const AddTopicForm = () => {
     const [newTopic, setNewTopic] = useState({ title: '', parent: '' });
     const [feedbackMessage, setFeedbackMessage] = useState({ message: '', success: false });
+    const [topics, setTopics] = useState([]);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const response = await authApi.get('/api/v1/topic/all');
+                if (response.status === 200) {
+                    setTopics(response.data.topics);
+                }
+            } catch (error) {
+                console.error('Failed to fetch topics:', error);
+            }
+        };
+        fetchTopics();
+    }, []);
 
     const handleAddTopic = async (e) => {
         e.preventDefault();
@@ -52,12 +67,17 @@ const AddTopicForm = () => {
                 onChange={(e) => setNewTopic({ ...newTopic, title: e.target.value })}
                 required
             />
-            <Input
-                type="text"
-                placeholder="Parent"
+            <Select
                 value={newTopic.parent}
                 onChange={(e) => setNewTopic({ ...newTopic, parent: e.target.value })}
-            />
+            >
+                <option value="">None (Root)</option>
+                {topics.map((topic) => (
+                    <option key={topic.id} value={topic.title}>
+                        {topic.title}
+                    </option>
+                ))}
+            </Select>
             <SubmitButton type="submit">Add Topic</SubmitButton>
             {feedbackMessage.message && (
                 <Feedback $success={feedbackMessage.success}>{feedbackMessage.message}</Feedback>
@@ -102,6 +122,18 @@ const SubmitButton = styled.button`
 const Feedback = styled.p`
     color: ${props => props.$success ? 'green' : 'red'};
     margin-top: 8px;
+`;
+
+const Select = styled.select`
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    font-size: 1em;
+    background-color: #34495e;
+    color: #e0f7fa;
+    cursor: pointer;
 `;
 
 export default AddTopicForm;

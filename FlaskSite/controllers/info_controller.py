@@ -3,7 +3,7 @@ from werkzeug.datastructures import FileStorage
 import logging
 
 from FlaskSite.services import info_service
-from FlaskSite.services.topic_service import get_topic
+from FlaskSite.services.topic_service import get_topic, get_breadcrumb_path
 from FlaskSite.utils.list_utils import get_unique_list_of_dictionaries
 
 logger = logging.getLogger(__name__)
@@ -80,7 +80,13 @@ def transform_info(info):
 def get_info(search_key, user_id):
     info_list = info_service.get_info(search_key, user_id)
 
-    result = [transform_info(info) for info in info_list]
+    result = [
+        {
+            **transform_info(info),
+            'breadcrumb': get_breadcrumb_path(user_id, info.topic_id)
+        }
+        for info in info_list
+    ]
     return result
 
 
