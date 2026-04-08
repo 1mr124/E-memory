@@ -1,6 +1,19 @@
 # E-memory
 
-![Pylint Status](https://github.com/1mr124/E-memory/actions/workflows/pylint.yml/badge.svg)
+## CI/CD Status
+
+### Backend
+[![Pylint](https://github.com/1mr124/E-memory/actions/workflows/pylint.yml/badge.svg)](https://github.com/1mr124/E-memory/actions/workflows/pylint.yml)
+
+### Frontend
+[![Tests](https://github.com/1mr124/E-memory/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/1mr124/E-memory/actions/workflows/frontend-test.yml)
+[![Lint](https://github.com/1mr124/E-memory/actions/workflows/frontend-lint.yml/badge.svg)](https://github.com/1mr124/E-memory/actions/workflows/frontend-lint.yml)
+[![Build](https://github.com/1mr124/E-memory/actions/workflows/frontend-build.yml/badge.svg)](https://github.com/1mr124/E-memory/actions/workflows/frontend-build.yml)
+
+### Security
+[![Dependency Check](https://github.com/1mr124/E-memory/actions/workflows/dependency-check.yml/badge.svg)](https://github.com/1mr124/E-memory/actions/workflows/dependency-check.yml)
+
+---
 
 A personal knowledge management application with hierarchical topics and information entries.
 
@@ -173,15 +186,46 @@ flask db upgrade
 
 ## Code Quality
 
+### Backend
+
 Run pylint (matches CI):
 ```bash
 pylint . --enable=W --disable=C0103
 ```
 
-Run frontend tests:
+### Frontend
+
+Run tests:
 ```bash
 cd client
 npm test
+```
+
+Run ESLint:
+```bash
+cd client
+npm run start
+# ESLint runs automatically on build
+```
+
+Build for production:
+```bash
+cd client
+npm run build
+```
+
+### Security
+
+Check Python dependencies for vulnerabilities:
+```bash
+pip install pip-audit
+pip-audit --requirement requirements.txt
+```
+
+Check Node.js dependencies for vulnerabilities:
+```bash
+cd client
+npm audit
 ```
 
 ## Configuration
@@ -213,10 +257,14 @@ DATABASE_URL=sqlite:///site.db  # or your production database URL
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+4. Push to the branch (`git push origin feature-amazing-feature`)
 5. Open a Pull Request
 
-Please ensure your code passes pylint checks before submitting a PR.
+Please ensure your code passes all CI checks before submitting a PR:
+- Backend Pylint score must not decrease
+- Frontend tests must pass
+- Frontend build must succeed
+- No critical security vulnerabilities in dependencies
 
 ## License
 
