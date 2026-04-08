@@ -5,57 +5,75 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update even if score unchanged'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
-  build:
-
+  update_score:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out code
-    - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    # Step 2: Set up Python 3.9
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
 
-    # Step 3: Install dependencies
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
 
-    # Step 4: Run Pylint on current branch and capture score
-    - name: Run Pylint on current branch
-      id: pylint_current
-      run: |
-        pylint . --enable=W --disable=C0103 | tee pylint_output.txt
-        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
-        echo "Pylint score: $pylint_score"
-        echo "score=$pylint_score" >> $GITHUB_ENV
+      - name: Run Pylint
+        id: pylint_run
+        run: |
+          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
+          echo "$pylint_output" > pylint_output.txt
+          score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          echo "score=${score:-0}" >> $GITHUB_ENV
+          echo "Pylint score: ${score:-0}"
 
-    # Step 5: Clean up pylint output
-    - name: Remove pylint_output.txt (cleanup)
-      run: |
-        rm pylint_output.txt
+      - name: Update README with new score
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          old_score=$(grep -oP '(?<=Pylint Status badge for score )\d+\.\d+' README.md || echo "0")
+          
+          if [[ "${{ env.score }}" != "$old_score" ]] || [[ "${{ inputs.force_update }}" == "true" ]]; then
+            sed -i "s/Pylint Status badge for score [0-9.]*/Pylint Status badge for score ${{ env.score }}/g" README.md
+            git add README.md
+            
+            echo "Old score: $old_score"
+            echo "New score: ${{ env.score }}"
+            
+            if ! git diff-index --quiet HEAD --; then
+              git commit -m "chore: update pylint score from $old_score to ${{ env.score }}"
+              git push origin main
+              echo "✓ Successfully updated pylint score in README"
+            else
+              echo "No changes detected in README"
+            fi
+          else
+            echo "Score unchanged (${{ env.score }}), skipping update"
+          fi
 
-    # Step 6: Commit changes and push to a new branch
-    - name: Commit changes
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout main
-        old_score=$(sed -n 's/pylint score: \([0-9\.]*\)/\1/p' README.md)
-        sed -i "s/pylint score: [0-9\.]*/pylint score: $score/g" README.md
-        git add README.md
-        echo "Score to commit: $score"
-        echo "Contents of README after update:"
-        cat README.md
-        if ! git diff-index --quiet HEAD --; then
-          git commit -m "Update pylint score in README $old_score to $score"
-          git push origin main
-        else
-          echo "No changes to commit."
-        fi
+      - name: Clean up
+        if: always()
+        run: |
+          rm -f pylint_output.txt

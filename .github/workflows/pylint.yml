@@ -1,59 +1,77 @@
-name: Pylint Quality Check #--disable=C0103 to ignore the convention checks till we are good with everything first
+name: Backend - Pylint Quality Check
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the current branch's code
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    # Step 2: Set up Python environment
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
 
-    # Step 3: Install dependencies including pylint
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
 
-    # Step 4: Run Pylint on the current branch
-    - name: Run Pylint on current branch
-      id: pylint_current
-      run: |
-        pylint . --enable=W --disable=C0103 | tee pylint_output.txt
-        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
-        echo "Pylint score on current branch: $pylint_score"
-        echo "current_score=$pylint_score" >> $GITHUB_ENV
+      - name: Run Pylint on current branch
+        id: pylint_current
+        run: |
+          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
+          echo "$pylint_output" > pylint_output.txt
+          current_score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          echo "current_score=${current_score:-0}" >> $GITHUB_ENV
+          echo "Pylint score on current branch: ${current_score:-0}"
 
-    # Step 5: Check out the main branch for comparison
-    - name: Checkout main branch
-      run: |
-        git fetch origin main
-        git checkout main
+      - name: Checkout main branch
+        run: |
+          git checkout origin/main
 
-    # Step 6: Run Pylint on the main branch
-    - name: Run Pylint on main branch
-      id: pylint_master
-      run: |
-        pylint . --enable=W --disable=C0103 | tee pylint_output.txt
-        pylint_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
-        echo "Pylint score on main branch: $pylint_score"
-        echo "master_score=$pylint_score" >> $GITHUB_ENV
+      - name: Run Pylint on main branch
+        id: pylint_main
+        run: |
+          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
+          echo "$pylint_output" > pylint_output_main.txt
+          main_score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          echo "main_score=${main_score:-0}" >> $GITHUB_ENV
+          echo "Pylint score on main branch: ${main_score:-0}"
 
-    # Step 7: Compare the Pylint scores between the current branch and main branch
-    - name: Compare Pylint scores
-      run: |
-        echo "Current branch Pylint score: ${{ env.current_score }}"
-        echo "Main branch Pylint score: ${{ env.master_score }}"
-        if (( $(echo "${{ env.current_score }} < ${{ env.master_score }}" | bc -l) )); then
-          echo "Pylint score decreased! Please check the code quality."
-          exit 1
-        else
-          echo "Pylint score is good or has improved."
-        fi
+      - name: Compare Pylint scores
+        run: |
+          echo "Current branch Pylint score: ${{ env.current_score }}"
+          echo "Main branch Pylint score: ${{ env.main_score }}"
+          if (( $(echo "${{ env.current_score }} < ${{ env.main_score }}" | bc -l 2>/dev/null || echo "0") )); then
+            echo "::error::Pylint score decreased from ${{ env.main_score }} to ${{ env.current_score }}!"
+            exit 1
+          else
+            echo "Pylint score is good or has improved."
+          fi
+
+      - name: Upload Pylint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-reports
+          path: |
+            pylint_output.txt
+            pylint_output_main.txt
+          retention-days: 7
