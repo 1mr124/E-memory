@@ -36,9 +36,11 @@ jobs:
       - name: Run Pylint on current branch
         id: pylint_current
         run: |
-          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
-          echo "$pylint_output" > pylint_output.txt
-          current_score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          set +e
+          pylint . --enable=W --disable=C0103 2>&1 | tee pylint_output.txt
+          pylint_exit_code=$?
+          set -e
+          current_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
           echo "current_score=${current_score:-0}" >> $GITHUB_ENV
           echo "Pylint score on current branch: ${current_score:-0}"
 
@@ -49,9 +51,11 @@ jobs:
       - name: Run Pylint on main branch
         id: pylint_main
         run: |
-          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
-          echo "$pylint_output" > pylint_output_main.txt
-          main_score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          set +e
+          pylint . --enable=W --disable=C0103 2>&1 | tee pylint_output_main.txt
+          pylint_exit_code=$?
+          set -e
+          main_score=$(grep "Your code has been rated" pylint_output_main.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
           echo "main_score=${main_score:-0}" >> $GITHUB_ENV
           echo "Pylint score on main branch: ${main_score:-0}"
 
@@ -59,12 +63,16 @@ jobs:
         run: |
           echo "Current branch Pylint score: ${{ env.current_score }}"
           echo "Main branch Pylint score: ${{ env.main_score }}"
-          if (( $(echo "${{ env.current_score }} < ${{ env.main_score }}" | bc -l 2>/dev/null || echo "0") )); then
-            echo "::error::Pylint score decreased from ${{ env.main_score }} to ${{ env.current_score }}!"
-            exit 1
-          else
-            echo "Pylint score is good or has improved."
-          fi
+          python3 -c "
+              import sys
+              current = float('${{ env.current_score }}')
+              main = float('${{ env.main_score }}')
+              if current < main:
+                  print(f'Pylint score decreased from {main} to {current}!')
+                  sys.exit(1)
+              else:
+                  print('Pylint score is good or has improved.')
+          "
 
       - name: Upload Pylint reports
         if: always()

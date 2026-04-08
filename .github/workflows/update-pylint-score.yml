@@ -42,9 +42,11 @@ jobs:
       - name: Run Pylint
         id: pylint_run
         run: |
-          pylint_output=$(pylint . --enable=W --disable=C0103 2>&1 || true)
-          echo "$pylint_output" > pylint_output.txt
-          score=$(echo "$pylint_output" | grep "Your code has been rated" | tail -1 | grep -oP '(?<=rated )\d+\.\d+')
+          set +e
+          pylint . --enable=W --disable=C0103 2>&1 | tee pylint_output.txt
+          pylint_exit_code=$?
+          set -e
+          score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
           echo "score=${score:-0}" >> $GITHUB_ENV
           echo "Pylint score: ${score:-0}"
 
