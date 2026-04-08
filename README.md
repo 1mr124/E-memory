@@ -190,7 +190,7 @@ flask db upgrade
 
 Run pylint (matches CI):
 ```bash
-pylint . --enable=W --disable=C0103
+pylint FlaskSite/ --enable=W --disable=C0103 --ignore=tests --ignore=migrations
 ```
 
 ### Frontend

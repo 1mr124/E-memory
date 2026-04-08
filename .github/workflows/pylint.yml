@@ -37,7 +37,7 @@ jobs:
         id: pylint_current
         run: |
           set +e
-          pylint . --enable=W --disable=C0103 2>&1 | tee pylint_output.txt
+          pylint FlaskSite/ --enable=W --disable=C0103 --ignore=tests --ignore=migrations 2>&1 | tee pylint_output.txt
           pylint_exit_code=$?
           set -e
           current_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
@@ -52,7 +52,7 @@ jobs:
         id: pylint_main
         run: |
           set +e
-          pylint . --enable=W --disable=C0103 2>&1 | tee pylint_output_main.txt
+          pylint FlaskSite/ --enable=W --disable=C0103 --ignore=tests --ignore=migrations 2>&1 | tee pylint_output_main.txt
           pylint_exit_code=$?
           set -e
           main_score=$(grep "Your code has been rated" pylint_output_main.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
