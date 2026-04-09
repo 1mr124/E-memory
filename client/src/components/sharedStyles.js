@@ -1,5 +1,20 @@
 // sharedStyles.js
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+// Responsive Breakpoints
+export const breakpoints = {
+    mobile: '768px',
+    tablet: '1024px',
+    desktop: '1025px'
+};
+
+// Media Query Helpers
+export const media = {
+    mobile: (...args) => css`@media (max-width: ${breakpoints.mobile}) { ${css(...args)} }`,
+    tabletPortrait: (...args) => css`@media (min-width: ${breakpoints.mobile}) and (max-width: ${parseInt(breakpoints.desktop) - 1}px) { ${css(...args)} }`,
+    tabletLandscape: (...args) => css`@media (min-width: ${breakpoints.tablet}) { ${css(...args)} }`,
+    desktop: (...args) => css`@media (min-width: ${breakpoints.desktop}) { ${css(...args)} }`
+};
 
 // Shared Container Style
 export const Container = styled.div`

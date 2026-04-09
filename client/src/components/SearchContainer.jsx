@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import authApi from '../api/authApi'; // Import the API
+import { media } from './sharedStyles';
 
 import InfoDisplayControler from './InfoDisplayControler';
 
@@ -12,12 +13,29 @@ const Container = styled.div`
     justify-content: flex-start;
     width: 90%;
     max-width: 800px;
-    height: auto;
+    min-height: auto;
     background-color: #1c2a39;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin: auto;
-    height: 710px;
+    overflow-x: hidden;
+
+    ${media.mobile`
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+        padding: 0;
+    `}
+
+    ${media.tabletPortrait`
+        width: 95%;
+        padding: 20px;
+    `}
+
+    ${media.desktop`
+        width: 95%;
+        max-width: 100%;
+    `}
 `;
 
 const Form = styled.form`
@@ -25,9 +43,13 @@ const Form = styled.form`
 `;
 
 const InputContainer = styled.div`
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #1c2a39;
     display: flex;
     width: 100%;
+    padding: 10px 0;
 `;
 
 const SearchKeyInput = styled.input`
@@ -37,11 +59,17 @@ const SearchKeyInput = styled.input`
     border: none;
     outline: none;
     padding: 24px;
-    padding-right: 40px; 
+    padding-right: 40px;
     text-align: left;
     margin-bottom: 10px;
     border-radius: 4px;
     font-size: 1.2em;
+
+    ${media.mobile`
+        min-height: 44px;
+        padding: 12px 40px 12px 12px;
+        font-size: 1.1em;
+    `}
 `;
 
 const SearchIcon = styled(FaSearch)`
@@ -54,64 +82,31 @@ const SearchIcon = styled(FaSearch)`
     font-size: 1.4em;
 `;
 
-const ResultsList = styled.ul`
-    list-style-type: none;
-    padding: 0;
-    margin-top: 10px;
-    width: 80%;
-    margin: auto;
-`;
-
-const ResultItem = styled.li`
-    background-color: rgba(224, 247, 250, 0.5);
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-`;
-
-const Button = styled.button`
-    background-color: #34495e;
-    color: #e0f7fa;
-    border: none;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    &:hover {
-        background-color: #2c3e50;
-    }
-`;
-
-const InfoDetails = styled.div`
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #e0f7fa;
-    border-radius: 4px;
-`;
-
 const SearchContainer = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState([]);
-    const [expandedInfo, setExpandedInfo] = useState(null); // Track which info is expanded
+    const [expandedInfo, setExpandedInfo] = useState(null);
+    const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async (e) => {
         if (e) {
-            e.preventDefault(); // Only prevent default if event is defined
+            e.preventDefault();
         }
         if (!searchTerm) {
-            setResults([]); // Clear results if search term is empty
+            setResults([]);
+            setHasSearched(false);
             return;
         }
-  
+
         try {
             const token = sessionStorage.getItem('authToken');
 
             const response = await authApi.get(`/api/v1/search?searchKey=${searchTerm}`, {
             });
 
-            setResults(response.data); // Set results directly from the response
-            setExpandedInfo(null); // Reset expanded info when new results are fetched
+            setResults(response.data);
+            setExpandedInfo(null);
+            setHasSearched(true);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -119,15 +114,14 @@ const SearchContainer = () => {
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            handleSearch(); // Call handleSearch after the debounce delay
-        }, 500); // Delay to prevent too many API calls
+            handleSearch();
+        }, 500);
 
-        return () => clearTimeout(delayDebounceFn); // Cleanup on unmount or when searchTerm changes
-    }, [searchTerm]); // Fetch results whenever the search term changes
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
 
     const handleInfoButtonClick = (infoId) => {
-        // Toggle the details for the clicked info
-        setExpandedInfo(prev => (prev === infoId ? null : infoId)); 
+        setExpandedInfo(prev => (prev === infoId ? null : infoId));
     };
 
     return (
@@ -143,8 +137,8 @@ const SearchContainer = () => {
                 </InputContainer>
             </Form>
 
-            <InfoDisplayControler results={results} />
-            
+            <InfoDisplayControler results={results} hasSearched={hasSearched} />
+
         </Container>
     );
 };

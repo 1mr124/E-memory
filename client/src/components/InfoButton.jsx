@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { media } from './sharedStyles';
 
 const KeyButton = styled.button`
     background-color: #34495e;
@@ -11,7 +12,22 @@ const KeyButton = styled.button`
     cursor: pointer;
     margin: 0 3px;
     text-align: left;
-    min-width: 250px;
+    width: 100%;
+
+    ${media.mobile`
+        width: 100%;
+        min-height: 44px;
+        margin: 4px 0;
+    `}
+
+    ${media.tabletPortrait`
+        padding: 15px;
+        margin: 5px 0;
+    `}
+
+    ${media.desktop`
+        width: 100%;
+    `}
 
     &:hover {
         background-color: #2e3d60;
@@ -34,6 +50,13 @@ const BreadcrumbPath = styled.div`
     display: flex;
     align-items: center;
     gap: 4px;
+
+    ${media.mobile`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    `}
 `;
 
 const BreadcrumbLink = styled.button`

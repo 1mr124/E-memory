@@ -1,10 +1,18 @@
 import React from 'react';
 import { Container, Headline, Comment } from './sharedStyles';
 import styled from 'styled-components';
+import { media } from './sharedStyles';
 
 const StyledLink = styled.a`
     color: #1abc9c;
     text-decoration: none;
+    word-break: break-all;
+
+    ${media.mobile`
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    `}
 
     &:hover {
         text-decoration: underline;
