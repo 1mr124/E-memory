@@ -1,11 +1,16 @@
 import React from 'react';
 import { Container, Headline, Comment } from './sharedStyles';
 import styled from 'styled-components';
+import { media } from './sharedStyles';
 
 const Image = styled.img`
     max-width: 100%;
     height: auto;
     border-radius: 8px;
+
+    ${media.mobile`
+        width: 100%;
+    `}
 `;
 
 const PicDisplay = ({ infoPics }) => {

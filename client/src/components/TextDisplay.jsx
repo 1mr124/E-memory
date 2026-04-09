@@ -3,7 +3,7 @@ import { Container, Headline, Paragraph, Comment } from './sharedStyles'; // Imp
 
 const TextDisplay = ({ infoTexts }) => {
     return (
-        <Container>
+        <Container style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>
             {Array.isArray(infoTexts) && infoTexts.length > 0 ? (
                 infoTexts.map((textObj, index) => (
                     <div key={index}>
