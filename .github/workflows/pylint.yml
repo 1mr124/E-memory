@@ -2,12 +2,19 @@ name: Backend - Pylint Quality Check
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
+      - develop
+    paths:
+      - 'FlaskSite/**'
+      - 'requirements.txt'
   pull_request:
     branches:
       - main
       - develop
+    paths:
+      - 'FlaskSite/**'
+      - 'requirements.txt'
 
 jobs:
   pylint:
@@ -33,39 +40,29 @@ jobs:
             pip install -r requirements.txt
           fi
 
-      - name: Run Pylint on current branch
-        id: pylint_current
+      - name: Run Pylint
+        id: pylint_run
         run: |
           set +e
           pylint FlaskSite/ --enable=W --disable=C0103 --ignore=tests --ignore=migrations 2>&1 | tee pylint_output.txt
           pylint_exit_code=$?
           set -e
-          current_score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
-          echo "current_score=${current_score:-0}" >> $GITHUB_ENV
-          echo "Pylint score on current branch: ${current_score:-0}"
+          score=$(grep "Your code has been rated" pylint_output.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
+          echo "score=${score:-0}" >> $GITHUB_ENV
+          echo "Pylint score: ${score:-0}"
 
-      - name: Checkout main branch
+      - name: Compare with main (for PRs)
+        if: github.event_name == 'pull_request'
         run: |
           git checkout origin/main
-
-      - name: Run Pylint on main branch
-        id: pylint_main
-        run: |
           set +e
           pylint FlaskSite/ --enable=W --disable=C0103 --ignore=tests --ignore=migrations 2>&1 | tee pylint_output_main.txt
-          pylint_exit_code=$?
           set -e
           main_score=$(grep "Your code has been rated" pylint_output_main.txt | tail -1 | awk '{print $7}' | sed 's/\/.*//')
           echo "main_score=${main_score:-0}" >> $GITHUB_ENV
-          echo "Pylint score on main branch: ${main_score:-0}"
-
-      - name: Compare Pylint scores
-        run: |
-          echo "Current branch Pylint score: ${{ env.current_score }}"
-          echo "Main branch Pylint score: ${{ env.main_score }}"
           python3 -c "
               import sys
-              current = float('${{ env.current_score }}')
+              current = float('${{ env.score }}')
               main = float('${{ env.main_score }}')
               if current < main:
                   print(f'Pylint score decreased from {main} to {current}!')

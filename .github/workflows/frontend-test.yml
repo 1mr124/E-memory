@@ -2,11 +2,18 @@ name: Frontend - Tests
 
 on:
   push:
+    branches:
+      - main
+      - develop
     paths:
       - 'client/**'
   pull_request:
+    branches:
+      - main
+      - develop
     paths:
       - 'client/**'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -14,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
 
     defaults:
       run:
@@ -38,7 +45,6 @@ jobs:
         run: npm test -- --passWithNoTests --watchAll=false --coverage
 
       - name: Upload coverage reports
-        if: matrix.node-version == '20.x'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report

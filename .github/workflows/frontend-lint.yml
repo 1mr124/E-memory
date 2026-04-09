@@ -2,11 +2,18 @@ name: Frontend - Lint
 
 on:
   push:
+    branches:
+      - main
+      - develop
     paths:
       - 'client/**'
   pull_request:
+    branches:
+      - main
+      - develop
     paths:
       - 'client/**'
+  workflow_dispatch:
 
 jobs:
   lint:
